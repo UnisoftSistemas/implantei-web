@@ -1,32 +1,27 @@
 import { useEffect } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { Box, Spinner, Center } from "@chakra-ui/react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./services/firebase";
 import { useAuthStore } from "./store/authStore";
-
-// Placeholder components - will be created in next steps
-const LoginPage = () => (
-  <Center h="100vh" bg="brand.500" color="white">
-    <Box textAlign="center">
-      <h1>Implantei Login</h1>
-      <p>Authentication coming next...</p>
-    </Box>
-  </Center>
-);
-
-const DashboardPage = () => (
-  <Center h="100vh" bg="gray.50">
-    <Box textAlign="center">
-      <h1>Dashboard</h1>
-      <p>Main app coming next...</p>
-    </Box>
-  </Center>
-);
+import { useUserProfile } from "./hooks/useAuth";
+import { LoginPage } from "./pages/LoginPage";
+import { DashboardPage } from "./pages/DashboardPage";
+import { AuthGuard } from "./components/AuthGuard";
 
 function App() {
-  const { setFirebaseUser, setLoading, isLoading, isAuthenticated } =
-    useAuthStore();
+  const {
+    setFirebaseUser,
+    setLoading,
+    setUser,
+    isLoading,
+    isAuthenticated,
+    firebaseUser,
+    user,
+  } = useAuthStore();
+
+  // Fetch user profile when Firebase user exists but backend user doesn't
+  const { data: profileData, isLoading: profileLoading } = useUserProfile();
 
   useEffect(() => {
     // Listen to Firebase auth state changes
@@ -38,11 +33,26 @@ function App() {
     return () => unsubscribe();
   }, [setFirebaseUser, setLoading]);
 
-  // Show loading spinner while checking auth
-  if (isLoading) {
+  useEffect(() => {
+    if (profileData && !user) {
+      setUser(profileData);
+    }
+  }, [profileData, user, setUser]);
+
+  // Show loading while:
+  // 1. Firebase is initializing, OR
+  // 2. We have Firebase user but no backend user and we're loading profile
+  if (isLoading || (firebaseUser && !user && profileLoading)) {
     return (
       <Center h="100vh" bg="brand.500">
-        <Spinner size="xl" color="white" borderWidth="4px" />
+        <Box textAlign="center">
+          <Spinner size="xl" color="white" borderWidth="4px" mb={4} />
+          <Box color="white" fontSize="sm">
+            {isLoading
+              ? "Carregando aplicação..."
+              : "Carregando dados do usuário..."}
+          </Box>
+        </Box>
       </Center>
     );
   }
@@ -54,15 +64,38 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
 
         {/* Protected routes */}
-        {isAuthenticated ? (
-          <>
-            <Route path="/" element={<DashboardPage />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
-            {/* More protected routes will be added here */}
-          </>
-        ) : (
-          <Route path="*" element={<LoginPage />} />
-        )}
+        <Route
+          path="/dashboard"
+          element={
+            <AuthGuard>
+              <DashboardPage />
+            </AuthGuard>
+          }
+        />
+
+        {/* Default redirect */}
+        <Route
+          path="/"
+          element={
+            isAuthenticated ? (
+              <Navigate to="/dashboard" replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        {/* Catch all - redirect to login or dashboard */}
+        <Route
+          path="*"
+          element={
+            isAuthenticated ? (
+              <Navigate to="/dashboard" replace />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
       </Routes>
     </Box>
   );

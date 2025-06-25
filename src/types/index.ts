@@ -4,6 +4,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  firebaseUid: string;
   phone?: string;
   role: "admin" | "manager" | "consultant" | "technician" | "client";
   profileImageUrl?: string;
@@ -119,6 +120,7 @@ export interface Notification {
 }
 
 export interface ApiResponse<T> {
+  user: User;
   data: T;
   message?: string;
   success: boolean;
