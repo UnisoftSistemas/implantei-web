@@ -1,60 +1,61 @@
 import { createSystem, defaultConfig } from "@chakra-ui/react";
 
-// Implantei brand colors based on the design system
+// Implantei brand colors based on the actual design system
 const implanteiTheme = createSystem(defaultConfig, {
   theme: {
     tokens: {
       colors: {
-        // Primary brand colors (purples from the design)
+        // Primary brand colors (correct purple palette)
         brand: {
-          50: { value: "#f5f3ff" },
-          100: { value: "#ede9fe" },
-          200: { value: "#ddd6fe" },
-          300: { value: "#c4b5fd" },
-          400: { value: "#a78bfa" },
-          500: { value: "#8b5cf6" }, // Main purple
-          600: { value: "#7c3aed" }, // Primary purple from design
-          700: { value: "#6d28d9" },
-          800: { value: "#5b21b6" },
-          900: { value: "#4c1d95" },
+          50: { value: "#F2F4FF" }, // Lightest purple from palette
+          100: { value: "#E8EBFF" },
+          200: { value: "#D1D6FF" },
+          300: { value: "#B4BCFF" },
+          400: { value: "#8B97FF" },
+          500: { value: "#6517FF" }, // Main purple from palette
+          600: { value: "#4E20E3" }, // Primary purple from palette
+          700: { value: "#351B89" }, // Darker purple from palette
+          800: { value: "#201835" }, // Darkest purple from palette
+          900: { value: "#1A1428" },
         },
-        // Secondary brand colors (darker purples)
+        // Keep brandDark as variations of the main purple
         brandDark: {
-          50: { value: "#faf7ff" },
-          100: { value: "#f3efff" },
-          200: { value: "#e9dfff" },
-          300: { value: "#d4c4ff" },
-          400: { value: "#b794f6" },
-          500: { value: "#9f7aea" },
-          600: { value: "#805ad5" },
-          700: { value: "#6b46c1" }, // Secondary purple from design
-          800: { value: "#553c9a" },
-          900: { value: "#44337a" },
+          50: { value: "#F2F4FF" },
+          100: { value: "#E8EBFF" },
+          200: { value: "#D1D6FF" },
+          300: { value: "#B4BCFF" },
+          400: { value: "#8B97FF" },
+          500: { value: "#6517FF" },
+          600: { value: "#4E20E3" },
+          700: { value: "#351B89" },
+          800: { value: "#201835" },
+          900: { value: "#1A1428" },
         },
-        // Accent color (yellow from design)
+        // Accent color (yellow from palette)
         accent: {
-          50: { value: "#fffbeb" },
-          100: { value: "#fef3c7" },
-          200: { value: "#fde68a" },
-          300: { value: "#fcd34d" },
-          400: { value: "#fbbf24" }, // Yellow from design
-          500: { value: "#f59e0b" },
-          600: { value: "#d97706" },
-          700: { value: "#b45309" },
-          800: { value: "#92400e" },
-          900: { value: "#78350f" },
+          50: { value: "#FEFEF0" },
+          100: { value: "#FEFDE8" },
+          200: { value: "#FEFBD0" },
+          300: { value: "#FDF8A8" },
+          400: { value: "#FCF553" }, // Main yellow from palette
+          500: { value: "#FBF237" },
+          600: { value: "#F0E71A" },
+          700: { value: "#D4CA15" },
+          800: { value: "#B8AD13" },
+          900: { value: "#9C9011" },
         },
         // Neutral grays
         gray: {
-          50: { value: "#f9fafb" },
-          100: { value: "#f3f4f6" },
-          200: { value: "#e5e7eb" },
-          300: { value: "#d1d5db" },
-          400: { value: "#9ca3af" },
-          500: { value: "#6b7280" },
-          600: { value: "#4b5563" },
+          25: { value: "#FAFBFC" },
+          50: { value: "#F9FAFB" },
+          100: { value: "#F3F4F6" },
+          200: { value: "#E5E7EB" },
+          300: { value: "#D1D5DB" },
+          400: { value: "#9CA3AF" },
+          500: { value: "#6B7280" },
+          600: { value: "#4B5563" },
           700: { value: "#374151" },
-          800: { value: "#1f2937" },
+          800: { value: "#1F2937" },
           900: { value: "#111827" },
         },
       },
@@ -84,6 +85,7 @@ const implanteiTheme = createSystem(defaultConfig, {
         md: { value: "0.5rem" },
         lg: { value: "0.75rem" },
         xl: { value: "1rem" },
+        "2xl": { value: "1.5rem" },
       },
       shadows: {
         sm: { value: "0 1px 2px 0 rgb(0 0 0 / 0.05)" },
@@ -106,8 +108,8 @@ const implanteiTheme = createSystem(defaultConfig, {
         // App specific semantic tokens
         bg: {
           default: { value: "white" },
-          subtle: { value: "gray.50" },
-          muted: { value: "gray.100" },
+          subtle: { value: "gray.25" },
+          muted: { value: "gray.50" },
         },
         fg: {
           default: { value: "gray.900" },

@@ -2,14 +2,16 @@ import { useEffect } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Box, Spinner, Center } from "@chakra-ui/react";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "./services/firebase";
-import { useAuthStore } from "./store/authStore";
-import { useUserProfile } from "./hooks/useAuth";
-import { LoginPage } from "./pages/LoginPage";
-import { DashboardPage } from "./pages/DashboardPage";
-import { AuthGuard } from "./components/AuthGuard";
+import { useTranslation } from "react-i18next";
+import { auth } from "@/services/firebase";
+import { useAuthStore } from "@/store/authStore";
+import { useUserProfile } from "@/hooks/useAuth";
+import { LoginPage } from "@/pages/LoginPage";
+import { DashboardPage } from "@/pages/DashboardPage";
+import { AuthGuard } from "@/components/AuthGuard";
 
 function App() {
+  const { t } = useTranslation();
   const {
     setFirebaseUser,
     setLoading,
@@ -48,9 +50,7 @@ function App() {
         <Box textAlign="center">
           <Spinner size="xl" color="white" borderWidth="4px" mb={4} />
           <Box color="white" fontSize="sm">
-            {isLoading
-              ? "Carregando aplicação..."
-              : "Carregando dados do usuário..."}
+            {isLoading ? t("auth.loadingApp") : t("auth.loadingUserData")}
           </Box>
         </Box>
       </Center>

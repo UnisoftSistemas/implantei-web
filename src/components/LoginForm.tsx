@@ -10,9 +10,11 @@ import {
   Link,
   Heading,
 } from "@chakra-ui/react";
-import { useLogin } from "../hooks/useAuth";
+import { useTranslation } from "react-i18next";
+import { useLogin } from "@/hooks/useAuth";
 
 export const LoginForm = () => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -44,7 +46,7 @@ export const LoginForm = () => {
             implantei
           </Heading>
           <Text color="gray.600" fontSize="sm">
-            Faça login para continuar
+            {t("auth.loginPlaceholder")}
           </Text>
         </Box>
 
@@ -53,9 +55,7 @@ export const LoginForm = () => {
             <Alert.Indicator />
             <Alert.Content>
               <Alert.Description>
-                <Text fontSize="sm">
-                  Erro ao fazer login. Verifique suas credenciais.
-                </Text>
+                <Text fontSize="sm">{t("auth.loginError")}</Text>
               </Alert.Description>
             </Alert.Content>
           </Alert.Root>
@@ -65,13 +65,13 @@ export const LoginForm = () => {
           <VStack gap={4}>
             <Box w="full">
               <Text mb={2} fontSize="sm" fontWeight="medium" color="gray.700">
-                E-mail
+                {t("auth.email")}
               </Text>
               <Input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="seu@email.com"
+                placeholder={t("auth.emailPlaceholder")}
                 size="lg"
                 borderRadius="md"
                 borderColor="gray.300"
@@ -85,13 +85,13 @@ export const LoginForm = () => {
 
             <Box w="full">
               <Text mb={2} fontSize="sm" fontWeight="medium" color="gray.700">
-                Senha
+                {t("auth.password")}
               </Text>
               <Input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder={t("auth.passwordPlaceholder")}
                 size="lg"
                 borderRadius="md"
                 borderColor="gray.300"
@@ -116,7 +116,7 @@ export const LoginForm = () => {
                 </Checkbox.Control>
                 <Checkbox.Label>
                   <Text fontSize="sm" color="gray.600">
-                    Mantenha-me conectado por 30 dias
+                    {t("auth.rememberMe")}
                   </Text>
                 </Checkbox.Label>
               </Checkbox.Root>
@@ -132,26 +132,28 @@ export const LoginForm = () => {
               _hover={{ bg: "gray.700" }}
               _active={{ bg: "gray.900" }}
               loading={loginMutation.isPending}
-              loadingText="Entrando..."
+              loadingText={t("common.loading")}
             >
-              Entrar
+              {t("auth.login")}
             </Button>
           </VStack>
         </form>
 
         <Box textAlign="center" pt={4} borderTop="1px" borderColor="gray.200">
           <Text fontSize="sm" color="gray.600">
-            Você está conectado na conta:{" "}
+            {t("auth.connectedAccount")}{" "}
             <Text as="span" fontWeight="medium" color="gray.800">
-              Sistema XYZ LTDA
+              {t("auth.systemName")}
             </Text>
           </Text>
 
           <Box mt={4} fontSize="xs" color="gray.500">
             <Link href="#" mr={4}>
-              Política de privacidade
+              {t("auth.privacyPolicy")}
             </Link>
-            <Text as="span">2025 - Todos os direitos reservados</Text>
+            <Text as="span">
+              {t("footer.copyright", { year: new Date().getFullYear() })}
+            </Text>
           </Box>
         </Box>
       </VStack>

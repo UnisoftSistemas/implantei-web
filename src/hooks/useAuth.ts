@@ -4,10 +4,10 @@ import {
   signOut,
   createUserWithEmailAndPassword,
 } from "firebase/auth";
-import { auth } from "../services/firebase";
-import { apiClient } from "../services/api";
-import { useAuthStore } from "../store/authStore";
-import type { User, ApiResponse } from "../types";
+import { auth } from "@/services/firebase";
+import { apiClient } from "@/services/api";
+import { useAuthStore } from "@/store/authStore";
+import type { User, ApiResponse } from "@/types";
 
 interface LoginCredentials {
   email: string;

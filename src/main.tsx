@@ -1,11 +1,12 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import React from "react";
+import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { ChakraProvider } from "@chakra-ui/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import App from "./App.tsx";
-import implanteiTheme from "./theme/index.ts";
+import App from "@/App.tsx";
+import implanteiTheme from "@/theme";
+import "@/i18n";
 
 // Create Query Client with sensible defaults
 const queryClient = new QueryClient({
@@ -21,8 +22,8 @@ const queryClient = new QueryClient({
   },
 });
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <ChakraProvider value={implanteiTheme}>
         <BrowserRouter>
@@ -31,5 +32,5 @@ createRoot(document.getElementById("root")!).render(
         <ReactQueryDevtools initialIsOpen={false} />
       </ChakraProvider>
     </QueryClientProvider>
-  </StrictMode>
+  </React.StrictMode>
 );

@@ -1,18 +1,18 @@
-import { create } from 'zustand'
-import type { User as FirebaseUser } from 'firebase/auth'
-import type { User } from '../types'
+import { create } from "zustand";
+import type { User as FirebaseUser } from "firebase/auth";
+import type { User } from "@/types";
 
 interface AuthState {
-  firebaseUser: FirebaseUser | null
-  user: User | null
-  isLoading: boolean
-  isAuthenticated: boolean
-  
+  firebaseUser: FirebaseUser | null;
+  user: User | null;
+  isLoading: boolean;
+  isAuthenticated: boolean;
+
   // Actions
-  setFirebaseUser: (user: FirebaseUser | null) => void
-  setUser: (user: User | null) => void
-  setLoading: (loading: boolean) => void
-  logout: () => void
+  setFirebaseUser: (user: FirebaseUser | null) => void;
+  setUser: (user: User | null) => void;
+  setLoading: (loading: boolean) => void;
+  logout: () => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -21,37 +21,37 @@ export const useAuthStore = create<AuthState>((set) => ({
   isLoading: true,
   isAuthenticated: false,
 
-  setFirebaseUser: (firebaseUser) => 
+  setFirebaseUser: (firebaseUser) =>
     set((state) => {
-      const newIsAuthenticated = !!firebaseUser && !!state.user
-      return { 
-        ...state, 
+      const newIsAuthenticated = !!firebaseUser && !!state.user;
+      return {
+        ...state,
         firebaseUser,
-        isAuthenticated: newIsAuthenticated
-      }
+        isAuthenticated: newIsAuthenticated,
+      };
     }),
 
-  setUser: (user) => 
+  setUser: (user) =>
     set((state) => {
-      const newIsAuthenticated = !!state.firebaseUser && !!user
-      return { 
-        ...state, 
+      const newIsAuthenticated = !!state.firebaseUser && !!user;
+      return {
+        ...state,
         user,
-        isAuthenticated: newIsAuthenticated
-      }
+        isAuthenticated: newIsAuthenticated,
+      };
     }),
 
-  setLoading: (isLoading) => 
-    set((state) => ({ 
-      ...state, 
-      isLoading 
+  setLoading: (isLoading) =>
+    set((state) => ({
+      ...state,
+      isLoading,
     })),
 
-  logout: () => 
+  logout: () =>
     set(() => ({
       firebaseUser: null,
       user: null,
       isLoading: false,
-      isAuthenticated: false
-    }))
-}))
+      isAuthenticated: false,
+    })),
+}));
