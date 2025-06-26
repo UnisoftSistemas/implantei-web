@@ -2,7 +2,7 @@ import { Box, Text, HStack, VStack, Avatar, Skeleton } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import type { ActivityFeedProps } from "@/types/Activity";
+import type { ActivityFeedProps } from "@/types";
 
 export const ActivityFeed = ({ activities, isLoading }: ActivityFeedProps) => {
   const { t } = useTranslation();

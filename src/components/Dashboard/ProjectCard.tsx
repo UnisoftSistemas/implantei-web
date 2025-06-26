@@ -11,12 +11,7 @@ import { useTranslation } from "react-i18next";
 import { Calendar, Users } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import type { Project } from "@/types";
-
-interface ProjectCardProps {
-  project: Project;
-  onClick?: () => void;
-}
+import type { ProjectCardProps } from "@/types";
 
 export const ProjectCard = ({ project, onClick }: ProjectCardProps) => {
   const { t } = useTranslation();
@@ -27,9 +22,11 @@ export const ProjectCard = ({ project, onClick }: ProjectCardProps) => {
         return "orange";
       case "in_progress":
         return "blue";
+      case "validation":
+        return "purple";
       case "completed":
         return "green";
-      case "paused":
+      case "on_hold":
         return "yellow";
       case "cancelled":
         return "red";
@@ -60,9 +57,11 @@ export const ProjectCard = ({ project, onClick }: ProjectCardProps) => {
         return 10;
       case "in_progress":
         return 65;
+      case "validation":
+        return 85;
       case "completed":
         return 100;
-      case "paused":
+      case "on_hold":
         return 40;
       case "cancelled":
         return 0;

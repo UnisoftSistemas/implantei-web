@@ -10,12 +10,7 @@ import {
 import { Clock, AlertCircle } from "lucide-react";
 import { format, isPast } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import type { Task } from "@/types";
-
-interface TaskItemProps {
-  task: Task;
-  onToggle?: (taskId: string) => void;
-}
+import type { TaskItemProps } from "@/types";
 
 export const TaskItem = ({ task, onToggle }: TaskItemProps) => {
   const getPriorityColor = (priority: string) => {
@@ -35,12 +30,14 @@ export const TaskItem = ({ task, onToggle }: TaskItemProps) => {
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case "bug":
-        return "🐛";
-      case "improvement":
-        return "⚡";
-      case "documentation":
-        return "📖";
+      case "validation":
+        return "🔍";
+      case "follow_up":
+        return "📞";
+      case "client":
+        return "👥";
+      case "internal":
+        return "🔧";
       default:
         return "📋";
     }

@@ -1,7 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/services/api";
-import type { DashboardStats, Project, Task, ApiResponse } from "@/types";
-import type { Activity } from "@/types/Activity";
+import type {
+  Activity,
+  DashboardStats,
+  Project,
+  Task,
+  ApiResponse,
+} from "@/types";
 
 // Hook to get dashboard statistics
 export const useDashboardStats = () => {

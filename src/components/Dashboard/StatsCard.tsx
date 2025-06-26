@@ -1,17 +1,6 @@
 import { Box, Text, HStack, Badge, Skeleton } from "@chakra-ui/react";
 import { TrendingUp, TrendingDown } from "lucide-react";
-
-interface StatsCardProps {
-  title: string;
-  value: number | string;
-  icon: string;
-  color: string;
-  trend?: {
-    value: number;
-    isPositive: boolean;
-  };
-  isLoading?: boolean;
-}
+import type { StatsCardProps } from "@/types";
 
 export const StatsCard = ({
   title,
