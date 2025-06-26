@@ -11,7 +11,6 @@ export const LoginPage = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      console.log("🚀 Already authenticated, redirecting to dashboard...");
       navigate("/dashboard", { replace: true });
     }
   }, [isAuthenticated, navigate]);

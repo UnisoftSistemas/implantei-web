@@ -6,14 +6,36 @@ import {
   Badge,
   Grid,
   GridItem,
+  Skeleton,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { MainLayout } from "@/components/Layout";
 import { useAuthStore } from "@/store/authStore";
+import { StatsCard } from "@/components/Dashboard/StatsCard";
+import { ProjectCard } from "@/components/Dashboard/ProjectCard";
+import { TaskItem } from "@/components/Dashboard/TaskItem";
+import { ActivityFeed } from "@/components/Dashboard/ActivityFeed";
+import {
+  useDashboardStats,
+  useDashboardProjects,
+  useDashboardTasks,
+  useDashboardTimeline,
+} from "@/hooks/useDashboard";
 
 export const DashboardPage = () => {
   const { t } = useTranslation();
   const { user } = useAuthStore();
+
+  // Fetch real data from API
+  const {
+    data: stats,
+    isLoading: statsLoading,
+    error: statsError,
+  } = useDashboardStats();
+  const { data: projects, isLoading: projectsLoading } = useDashboardProjects();
+  const { data: tasks, isLoading: tasksLoading } = useDashboardTasks();
+  const { data: activities, isLoading: activitiesLoading } =
+    useDashboardTimeline();
 
   const getRoleBadgeColor = (role: string) => {
     switch (role) {
@@ -34,6 +56,16 @@ export const DashboardPage = () => {
     return t(`user.roles.${role}`);
   };
 
+  // Calculate trends for stats (mock calculation for now)
+  const getStatsTrend = (current: number, previous: number) => {
+    if (previous === 0) return undefined;
+    const change = ((current - previous) / previous) * 100;
+    return {
+      value: Math.round(change),
+      isPositive: change > 0,
+    };
+  };
+
   return (
     <MainLayout>
       <VStack gap={8} align="stretch">
@@ -47,87 +79,86 @@ export const DashboardPage = () => {
           </Text>
         </Box>
 
-        {/* Stats grid */}
+        {/* Stats grid with real data */}
         <Grid templateColumns="repeat(auto-fit, minmax(280px, 1fr))" gap={6}>
-          {[
-            {
-              label: t("dashboard.activeProjects"),
-              value: "12",
-              icon: "📋",
-              color: "blue",
-            },
-            {
-              label: t("dashboard.pendingTasks"),
-              value: "34",
-              icon: "✅",
-              color: "orange",
-            },
-            {
-              label: t("dashboard.clientCompanies"),
-              value: "8",
-              icon: "🏢",
-              color: "green",
-            },
-            {
-              label: t("dashboard.openTickets"),
-              value: "5",
-              icon: "🎫",
-              color: "purple",
-            },
-          ].map((stat, index) => (
-            <GridItem key={index}>
-              <Box
-                bg="white"
-                p={6}
-                borderRadius="2xl"
-                border="1px"
-                borderColor="gray.100"
-                boxShadow="sm"
-                _hover={{
-                  boxShadow: "md",
-                  transform: "translateY(-2px)",
-                }}
-                transition="all 0.2s ease-in-out"
-              >
-                <HStack justify="space-between" mb={4}>
-                  <Box
-                    w="48px"
-                    h="48px"
-                    bg={`${stat.color}.50`}
-                    borderRadius="xl"
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="center"
-                  >
-                    <Text fontSize="xl">{stat.icon}</Text>
-                  </Box>
-                  <Badge
-                    colorScheme={stat.color}
-                    variant="subtle"
-                    borderRadius="full"
-                    px={3}
-                  >
-                    +12%
-                  </Badge>
-                </HStack>
+          <GridItem>
+            <StatsCard
+              title={t("dashboard.activeProjects")}
+              value={stats?.activeProjects || 0}
+              icon="📋"
+              color="blue"
+              trend={getStatsTrend(
+                stats?.activeProjects || 0,
+                stats?.totalProjects || 0
+              )}
+              isLoading={statsLoading}
+            />
+          </GridItem>
 
-                <Text fontSize="2xl" fontWeight="bold" color="gray.800" mb={1}>
-                  {stat.value}
-                </Text>
-                <Text fontSize="sm" color="gray.600">
-                  {stat.label}
-                </Text>
-              </Box>
-            </GridItem>
-          ))}
+          <GridItem>
+            <StatsCard
+              title={t("dashboard.pendingTasks")}
+              value={stats?.pendingTasks || 0}
+              icon="✅"
+              color="orange"
+              trend={getStatsTrend(
+                stats?.pendingTasks || 0,
+                stats?.totalTasks || 0
+              )}
+              isLoading={statsLoading}
+            />
+          </GridItem>
+
+          <GridItem>
+            <StatsCard
+              title={t("dashboard.clientCompanies")}
+              value={stats?.totalUsers || 0}
+              icon="🏢"
+              color="green"
+              trend={getStatsTrend(
+                stats?.activeUsers || 0,
+                stats?.totalUsers || 0
+              )}
+              isLoading={statsLoading}
+            />
+          </GridItem>
+
+          <GridItem>
+            <StatsCard
+              title={t("dashboard.openTickets")}
+              value={stats?.overdueTasks || 0}
+              icon="🎫"
+              color="purple"
+              trend={getStatsTrend(
+                stats?.overdueTasks || 0,
+                stats?.totalTasks || 0
+              )}
+              isLoading={statsLoading}
+            />
+          </GridItem>
         </Grid>
+
+        {/* Show error message if stats failed to load */}
+        {statsError && (
+          <Box
+            bg="red.50"
+            border="1px"
+            borderColor="red.200"
+            borderRadius="xl"
+            p={4}
+          >
+            <Text color="red.600" fontSize="sm">
+              Erro ao carregar estatísticas. Tente recarregar a página.
+            </Text>
+          </Box>
+        )}
 
         {/* Content sections */}
         <Grid templateColumns={{ base: "1fr", lg: "2fr 1fr" }} gap={8}>
           {/* Main content */}
           <GridItem>
             <VStack gap={6} align="stretch">
-              {/* Recent projects */}
+              {/* Recent projects with real data */}
               <Box
                 bg="white"
                 p={6}
@@ -145,60 +176,106 @@ export const DashboardPage = () => {
                     color="brand.500"
                     fontWeight="medium"
                     cursor="pointer"
+                    _hover={{ color: "brand.600" }}
+                    transition="color 0.2s ease-in-out"
                   >
                     {t("dashboard.seeAll")} →
                   </Text>
                 </HStack>
 
-                <VStack gap={4} align="stretch">
-                  {[
-                    {
-                      name: "Sistema ERP - Empresa ABC",
-                      status: t("project.status.inProgress"),
-                      progress: "75%",
-                    },
-                    {
-                      name: "CRM Implementation - XYZ Corp",
-                      status: t("project.status.planning"),
-                      progress: "25%",
-                    },
-                    {
-                      name: "Migração de Dados - Tech Solutions",
-                      status: t("project.status.completed"),
-                      progress: "100%",
-                    },
-                  ].map((project, index) => (
-                    <Box key={index} p={4} bg="gray.25" borderRadius="xl">
-                      <HStack justify="space-between" mb={2}>
-                        <Text
-                          fontSize="sm"
-                          fontWeight="medium"
-                          color="gray.800"
-                        >
-                          {project.name}
-                        </Text>
-                        <Badge
-                          size="sm"
-                          colorScheme={
-                            project.status === t("project.status.completed")
-                              ? "green"
-                              : project.status ===
-                                t("project.status.inProgress")
-                              ? "blue"
-                              : "orange"
-                          }
-                          variant="subtle"
-                          borderRadius="full"
-                        >
-                          {project.status}
-                        </Badge>
-                      </HStack>
-                      <Text fontSize="xs" color="gray.500">
-                        {t("project.progress")}: {project.progress}
-                      </Text>
-                    </Box>
-                  ))}
-                </VStack>
+                {projectsLoading ? (
+                  <VStack gap={4} align="stretch">
+                    {Array.from({ length: 3 }).map((_, index) => (
+                      <Box key={index} p={4} bg="gray.25" borderRadius="xl">
+                        <HStack justify="space-between" mb={2}>
+                          <Skeleton w="60%" h="16px" />
+                          <Skeleton w="60px" h="20px" borderRadius="full" />
+                        </HStack>
+                        <Skeleton w="40%" h="12px" />
+                      </Box>
+                    ))}
+                  </VStack>
+                ) : projects && projects.length > 0 ? (
+                  <VStack gap={4} align="stretch">
+                    {projects.slice(0, 3).map((project) => (
+                      <ProjectCard
+                        key={project.id}
+                        project={project}
+                        onClick={() => {
+                          // Future: navigate to project details
+                          console.log(`Navigate to project ${project.id}`);
+                        }}
+                      />
+                    ))}
+                  </VStack>
+                ) : (
+                  <Box textAlign="center" py={8}>
+                    <Text fontSize="sm" color="gray.500">
+                      Nenhum projeto encontrado
+                    </Text>
+                  </Box>
+                )}
+              </Box>
+
+              {/* My Tasks with real data */}
+              <Box
+                bg="white"
+                p={6}
+                borderRadius="2xl"
+                border="1px"
+                borderColor="gray.100"
+                boxShadow="sm"
+              >
+                <HStack justify="space-between" mb={6}>
+                  <Text fontSize="lg" fontWeight="bold" color="gray.800">
+                    Minhas Tarefas
+                  </Text>
+                  <Text
+                    fontSize="sm"
+                    color="brand.500"
+                    fontWeight="medium"
+                    cursor="pointer"
+                    _hover={{ color: "brand.600" }}
+                    transition="color 0.2s ease-in-out"
+                  >
+                    Ver todas →
+                  </Text>
+                </HStack>
+
+                {tasksLoading ? (
+                  <VStack gap={3} align="stretch">
+                    {Array.from({ length: 4 }).map((_, index) => (
+                      <Box key={index} p={4} bg="gray.25" borderRadius="xl">
+                        <HStack gap={3}>
+                          <Skeleton w="16px" h="16px" borderRadius="sm" />
+                          <Box flex={1}>
+                            <Skeleton w="70%" h="14px" mb={1} />
+                            <Skeleton w="40%" h="12px" />
+                          </Box>
+                        </HStack>
+                      </Box>
+                    ))}
+                  </VStack>
+                ) : tasks && tasks.length > 0 ? (
+                  <VStack gap={3} align="stretch">
+                    {tasks.slice(0, 5).map((task) => (
+                      <TaskItem
+                        key={task.id}
+                        task={task}
+                        onToggle={(taskId) => {
+                          // Future: implement task toggle
+                          console.log(`Toggle task ${taskId}`);
+                        }}
+                      />
+                    ))}
+                  </VStack>
+                ) : (
+                  <Box textAlign="center" py={8}>
+                    <Text fontSize="sm" color="gray.500">
+                      Nenhuma tarefa pendente
+                    </Text>
+                  </Box>
+                )}
               </Box>
 
               {/* User info card */}
@@ -289,21 +366,26 @@ export const DashboardPage = () => {
                       icon: "➕",
                       label: t("dashboard.newProject"),
                       color: "blue",
+                      onClick: () => console.log("Navigate to new project"),
                     },
                     {
                       icon: "🏢",
                       label: t("dashboard.registerCompany"),
                       color: "green",
+                      onClick: () =>
+                        console.log("Navigate to register company"),
                     },
                     {
                       icon: "✅",
                       label: t("dashboard.newTask"),
                       color: "orange",
+                      onClick: () => console.log("Navigate to new task"),
                     },
                     {
                       icon: "📊",
                       label: t("dashboard.reports"),
                       color: "purple",
+                      onClick: () => console.log("Navigate to reports"),
                     },
                   ].map((action, index) => (
                     <HStack
@@ -312,8 +394,12 @@ export const DashboardPage = () => {
                       bg="gray.25"
                       borderRadius="xl"
                       cursor="pointer"
-                      _hover={{ bg: "gray.50" }}
+                      _hover={{
+                        bg: "gray.50",
+                        transform: "translateY(-1px)",
+                      }}
                       transition="all 0.2s ease-in-out"
+                      onClick={action.onClick}
                     >
                       <Box
                         w="32px"
@@ -334,7 +420,7 @@ export const DashboardPage = () => {
                 </VStack>
               </Box>
 
-              {/* Activity feed */}
+              {/* Activity feed with real data */}
               <Box
                 bg="white"
                 p={6}
@@ -347,49 +433,10 @@ export const DashboardPage = () => {
                   {t("dashboard.recentActivities")}
                 </Text>
 
-                <VStack gap={3} align="stretch">
-                  {[
-                    {
-                      text: t("activities.projectUpdated"),
-                      time: t("activities.timeAgo.hoursAgo", { count: 2 }),
-                      type: "update",
-                    },
-                    {
-                      text: t("activities.companyRegistered"),
-                      time: t("activities.timeAgo.hoursAgo", { count: 4 }),
-                      type: "create",
-                    },
-                    {
-                      text: t("activities.taskCompleted"),
-                      time: t("activities.timeAgo.hoursAgo", { count: 6 }),
-                      type: "complete",
-                    },
-                  ].map((activity, index) => (
-                    <HStack key={index} gap={3}>
-                      <Box
-                        w="8px"
-                        h="8px"
-                        bg={
-                          activity.type === "complete"
-                            ? "green.400"
-                            : activity.type === "create"
-                            ? "blue.400"
-                            : "orange.400"
-                        }
-                        borderRadius="full"
-                        mt={1}
-                      />
-                      <Box flex={1}>
-                        <Text fontSize="sm" color="gray.700">
-                          {activity.text}
-                        </Text>
-                        <Text fontSize="xs" color="gray.500">
-                          {activity.time}
-                        </Text>
-                      </Box>
-                    </HStack>
-                  ))}
-                </VStack>
+                <ActivityFeed
+                  activities={activities || []}
+                  isLoading={activitiesLoading}
+                />
               </Box>
 
               {/* Tips */}

@@ -92,7 +92,7 @@ export interface Task {
   createdBy: string;
   type: "task" | "bug" | "improvement" | "documentation";
   priority: "low" | "medium" | "high" | "urgent";
-  status: "pending" | "in_progress" | "completed" | "cancelled";
+  status: "todo" | "in_progress" | "review" | "completed" | "cancelled";
   dueDate?: string;
   estimatedHours?: number;
   actualHours?: number;
