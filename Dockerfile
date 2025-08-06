@@ -14,8 +14,11 @@ COPY . .
 # Build da aplicação
 RUN yarn build
 
-ENV PORT=3000
+# A variável PORT é injetada pelo Railway
+ENV NODE_ENV=production
 
+# Expor a porta que o Railway vai usar
 EXPOSE ${PORT}
 
-CMD ["yarn", "preview"]
+# Usar a variável de ambiente PORT fornecida pelo Railway
+CMD ["sh", "-c", "yarn preview --host 0.0.0.0 --port ${PORT:-3000} --no-open"]
