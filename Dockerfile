@@ -11,7 +11,16 @@ RUN yarn install
 # Copiar o resto dos arquivos
 COPY . .
 
-# Build da aplicação
+# Definir variáveis de ambiente do Firebase para o build - necessário para substituição em tempo de build
+ARG VITE_FIREBASE_API_KEY
+ARG VITE_FIREBASE_AUTH_DOMAIN
+ARG VITE_FIREBASE_PROJECT_ID
+ARG VITE_FIREBASE_STORAGE_BUCKET
+ARG VITE_FIREBASE_MESSAGING_SENDER_ID
+ARG VITE_FIREBASE_APP_ID
+ARG VITE_API_BASE_URL
+
+# Build da aplicação com as variáveis de ambiente
 RUN yarn build
 
 # A variável PORT é injetada pelo Railway
