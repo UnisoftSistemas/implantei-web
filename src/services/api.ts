@@ -77,7 +77,7 @@ class ApiClient {
 
   async post<T>(
     endpoint: string,
-    data?: Record<string, string | number | boolean | null>
+    data?: object
   ): Promise<T> {
     const headers = await this.getAuthHeaders();
 
@@ -102,7 +102,7 @@ class ApiClient {
 
   async put<T>(
     endpoint: string,
-    data?: Record<string, string | number | boolean | null>
+    data?: object
   ): Promise<T> {
     const headers = await this.getAuthHeaders();
 

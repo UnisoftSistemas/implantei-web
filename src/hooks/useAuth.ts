@@ -7,19 +7,13 @@ import {
 import { auth } from "@/services/firebase";
 import { apiClient } from "@/services/api";
 import { useAuthStore } from "@/store/authStore";
-import type { User, ApiResponse } from "@/types";
-
-interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-interface RegisterData {
-  name: string;
-  email: string;
-  password: string;
-  phone?: string;
-}
+// Remover as interfaces locais e importar:
+import type {
+  User,
+  ApiResponse,
+  LoginCredentials,
+  RegisterData,
+} from "@/types";
 
 // Hook for Firebase login
 export const useLogin = () => {

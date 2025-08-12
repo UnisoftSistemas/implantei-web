@@ -8,6 +8,7 @@ import { useAuthStore } from "@/store/authStore";
 import { useUserProfile } from "@/hooks/useAuth";
 import { LoginPage } from "@/pages/LoginPage";
 import { DashboardPage } from "@/pages/DashboardPage";
+import { ProjectsPage } from "@/pages/ProjectsPage";
 import { AuthGuard } from "@/components/AuthGuard";
 
 function App() {
@@ -69,6 +70,15 @@ function App() {
           element={
             <AuthGuard>
               <DashboardPage />
+            </AuthGuard>
+          }
+        />
+
+        <Route
+          path="/projects"
+          element={
+            <AuthGuard>
+              <ProjectsPage />
             </AuthGuard>
           }
         />

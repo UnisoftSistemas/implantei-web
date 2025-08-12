@@ -54,6 +54,104 @@ export const ptBR = {
     registerCompany: "Cadastrar Empresa",
     newTask: "Nova Task",
     reports: "Relatórios",
+    noActivities: "Nenhuma atividade recente",
+  },
+
+  // Projects - COMPLETE section
+  projects: {
+    subtitle: "Gerencie todos os projetos de implantação",
+    searchPlaceholder: "Buscar projetos por nome, empresa...",
+    loadError: "Erro ao carregar projetos. Tente recarregar a página.",
+    resultsCount: "{{count}} projeto{{plural}} encontrado{{plural}}",
+    adjustFiltersMessage:
+      "Tente ajustar os filtros ou buscar por outros termos.",
+    createFirstMessage: "Comece criando seu primeiro projeto de implantação.",
+    createFirst: "Criar Primeiro Projeto",
+  },
+
+  // Project Status - UPDATED to match Prisma schema
+  project: {
+    status: {
+      planning: "Planejamento",
+      in_progress: "Em Andamento",
+      validation: "Validação",
+      completed: "Finalizado",
+      on_hold: "Em Pausa",
+      cancelled: "Cancelado",
+    },
+    progress: "Progresso",
+    details: "Detalhes do Projeto",
+    createNew: "Novo Projeto",
+    edit: "Editar Projeto",
+    delete: "Excluir Projeto",
+    stages: "Etapas",
+    timeline: "Timeline",
+    team: "Equipe",
+    client: "Cliente",
+    system: "Sistema",
+    priority: "Prioridade",
+    budget: "Orçamento",
+    startDate: "Data de Início",
+    estimatedEndDate: "Previsão de Término",
+    actualEndDate: "Data de Término Real",
+    noProjects: "Nenhum projeto encontrado",
+    totalProjects: "Total de Projetos",
+    activeProjects: "Projetos Ativos",
+    completedProjects: "Projetos Concluídos",
+  },
+
+  // Task Status - UPDATED to match Prisma schema
+  task: {
+    status: {
+      todo: "A Fazer",
+      in_progress: "Em Andamento",
+      review: "Em Revisão",
+      completed: "Concluída",
+      cancelled: "Cancelada",
+    },
+    type: {
+      internal: "Interna",
+      client: "Cliente",
+      validation: "Validação",
+      follow_up: "Follow-up",
+    },
+    priority: {
+      low: "Baixa",
+      medium: "Média",
+      high: "Alta",
+      urgent: "Urgente",
+    },
+    myTasks: "Minhas Tarefas",
+    allTasks: "Todas as Tarefas",
+    overdueTasks: "Tarefas Atrasadas",
+    pendingTasks: "Tarefas Pendentes",
+    completedTasks: "Tarefas Concluídas",
+    createNew: "Nova Tarefa",
+    assignedTo: "Responsável",
+    dueDate: "Prazo",
+    estimatedHours: "Horas Estimadas",
+    actualHours: "Horas Realizadas",
+    noTasks: "Nenhuma tarefa encontrada",
+  },
+
+  // Filters and Search - COMPLETE section
+  filters: {
+    all: "Todos",
+    total: "Total",
+    status: "Status",
+    priority: "Prioridade",
+    assignee: "Responsável",
+    dateRange: "Período",
+    moreFilters: "Mais Filtros",
+    clearFilters: "Limpar Filtros",
+    applyFilters: "Aplicar Filtros",
+    search: "Buscar",
+    searchPlaceholder: "Buscar por nome, empresa, descrição...",
+    noResultsFound: "Nenhum resultado encontrado",
+    resultsFound: "resultado(s) encontrado(s)",
+    sortBy: "Ordenar por",
+    allStatuses: "Todos os Status",
+    allPriorities: "Todas as Prioridades",
   },
 
   // User
@@ -76,18 +174,6 @@ export const ptBR = {
     },
   },
 
-  // Project Status
-  project: {
-    status: {
-      planning: "Planejamento",
-      inProgress: "Em andamento",
-      completed: "Finalizado",
-      paused: "Pausado",
-      cancelled: "Cancelado",
-    },
-    progress: "Progresso",
-  },
-
   // Activities
   activities: {
     projectUpdated: "Projeto ERP atualizado",
@@ -97,6 +183,78 @@ export const ptBR = {
       hoursAgo: "{{count}}h atrás",
       minutesAgo: "{{count}}min atrás",
     },
+  },
+
+  // Companies
+  company: {
+    name: "Nome da Empresa",
+    cnpj: "CNPJ",
+    segment: "Segmento",
+    contactPerson: "Pessoa de Contato",
+    address: "Endereço",
+    phone: "Telefone",
+    email: "E-mail",
+    active: "Ativa",
+    inactive: "Inativa",
+    createNew: "Nova Empresa",
+    edit: "Editar Empresa",
+    noCompanies: "Nenhuma empresa encontrada",
+  },
+
+  // Systems
+  system: {
+    name: "Nome do Sistema",
+    description: "Descrição",
+    version: "Versão",
+    category: "Categoria",
+    createNew: "Novo Sistema",
+    edit: "Editar Sistema",
+    noSystems: "Nenhum sistema encontrado",
+  },
+
+  // Notifications - NEW from Prisma schema
+  notification: {
+    type: {
+      project_assigned: "Projeto Atribuído",
+      task_assigned: "Tarefa Atribuída",
+      deadline_warning: "Aviso de Prazo",
+      stage_completed: "Etapa Concluída",
+      validation_required: "Validação Necessária",
+    },
+    status: {
+      unread: "Não lida",
+      read: "Lida",
+      archived: "Arquivada",
+    },
+    markAsRead: "Marcar como lida",
+    markAllAsRead: "Marcar todas como lidas",
+    archive: "Arquivar",
+    delete: "Excluir",
+    noNotifications: "Nenhuma notificação",
+  },
+
+  // Tickets - NEW from Prisma schema
+  ticket: {
+    type: {
+      question: "Pergunta",
+      issue: "Problema",
+      request: "Solicitação",
+      feedback: "Feedback",
+    },
+    status: {
+      open: "Aberto",
+      in_progress: "Em Andamento",
+      waiting_client: "Aguardando Cliente",
+      resolved: "Resolvido",
+      closed: "Fechado",
+    },
+    subject: "Assunto",
+    description: "Descrição",
+    createNew: "Novo Ticket",
+    reply: "Responder",
+    close: "Fechar",
+    reopen: "Reabrir",
+    noTickets: "Nenhum ticket encontrado",
   },
 
   // Tips
