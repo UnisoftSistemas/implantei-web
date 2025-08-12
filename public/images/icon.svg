@@ -1,0 +1,27 @@
+<svg width="126" height="126" viewBox="0 0 126 126" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g filter="url(#filter0_n_376_384)">
+<path d="M0.019536 73.2539C0.0154028 69.5127 4.9313 67.8161 7.56055 70.4453L30.9365 93.8213L54.46 117.346C57.0682 119.954 55.1463 125.527 51.4346 125.578H4.57032C2.25999 125.609 0.0233225 122.883 0.0205126 120.573L0.019536 73.2539ZM121.502 4.58912e-06C123.758 0.00367943 125.593 2.29355 125.597 4.54981V121.482C125.6 123.739 123.758 125.58 121.502 125.577H70.543C68.2865 125.574 66.4517 123.739 66.4482 121.482L66.4473 64.4014C66.4438 62.1449 64.4313 60.0874 62.1748 60.084H4.39258C2.13624 60.0803 0.0229543 58.2202 0.019536 55.9639V4.09571C0.0161177 1.83925 1.85782 -0.00335584 4.11426 4.58912e-06H121.502Z" fill="url(#paint0_linear_376_384)"/>
+</g>
+<defs>
+<filter id="filter0_n_376_384" x="0.0195312" y="0" width="125.578" height="125.579" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feTurbulence type="fractalNoise" baseFrequency="1.4285714626312256 1.4285714626312256" stitchTiles="stitch" numOctaves="3" result="noise" seed="1474" />
+<feColorMatrix in="noise" type="luminanceToAlpha" result="alphaNoise" />
+<feComponentTransfer in="alphaNoise" result="coloredNoise1">
+<feFuncA type="discrete" tableValues="0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 "/>
+</feComponentTransfer>
+<feComposite operator="in" in2="shape" in="coloredNoise1" result="noise1Clipped" />
+<feFlood flood-color="rgba(0, 0, 0, 0.3)" result="color1Flood" />
+<feComposite operator="in" in2="noise1Clipped" in="color1Flood" result="color1" />
+<feMerge result="effect1_noise_376_384">
+<feMergeNode in="shape" />
+<feMergeNode in="color1" />
+</feMerge>
+</filter>
+<linearGradient id="paint0_linear_376_384" x1="25.3559" y1="79.9591" x2="74.5335" y2="87.8769" gradientUnits="userSpaceOnUse">
+<stop stop-color="#2A2635"/>
+<stop offset="0.653846" stop-color="#4E20E3"/>
+</linearGradient>
+</defs>
+</svg>
