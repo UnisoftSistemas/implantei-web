@@ -55,17 +55,17 @@ export const useLogin = () => {
 export const useRegister = () => {
   return useMutation({
     mutationFn: async ({ name, email, password, phone }: RegisterData) => {
-      // Step 1: Create Firebase user
       await createUserWithEmailAndPassword(auth, email, password);
 
-      // Step 2: Register user in backend (token automatically added by apiClient)
+      const userData = {
+        name,
+        email,
+        ...(phone ? { phone } : {}),
+      };
+
       const response = await apiClient.post<ApiResponse<User>>(
         "/auth/register",
-        {
-          name,
-          email,
-          phone,
-        }
+        userData
       );
 
       return response.data;
