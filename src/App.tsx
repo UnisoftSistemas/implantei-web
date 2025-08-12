@@ -9,6 +9,7 @@ import { useUserProfile } from "@/hooks/useAuth";
 import { LoginPage } from "@/pages/LoginPage";
 import { DashboardPage } from "@/pages/DashboardPage";
 import { ProjectsPage } from "@/pages/ProjectsPage";
+import { ProjectDetailsPage } from "@/pages/ProjectDetailsPage";
 import { AuthGuard } from "@/components/AuthGuard";
 
 function App() {
@@ -79,6 +80,15 @@ function App() {
           element={
             <AuthGuard>
               <ProjectsPage />
+            </AuthGuard>
+          }
+        />
+
+        <Route
+          path="/projects/:id"
+          element={
+            <AuthGuard>
+              <ProjectDetailsPage />
             </AuthGuard>
           }
         />

@@ -15,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Plus, Search, Filter, MoreHorizontal } from "lucide-react";
 import { MainLayout } from "@/components/Layout";
 import { ProjectCard } from "@/components/Dashboard/ProjectCard";
@@ -22,6 +23,7 @@ import { useProjects } from "@/hooks/useProjects";
 
 export const ProjectsPage = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
@@ -324,8 +326,7 @@ export const ProjectsPage = () => {
                     <ProjectCard
                       project={project}
                       onClick={() => {
-                        // Future: navigate to project details
-                        console.log(`Navigate to project ${project.id}`);
+                        navigate(`/projects/${project.id}`);
                       }}
                     />
                   </GridItem>

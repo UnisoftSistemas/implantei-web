@@ -69,7 +69,7 @@ export const ptBR = {
     createFirst: "Criar Primeiro Projeto",
   },
 
-  // Project Status - UPDATED to match Prisma schema
+  // Project Status
   project: {
     status: {
       planning: "Planejamento",
@@ -98,9 +98,36 @@ export const ptBR = {
     totalProjects: "Total de Projetos",
     activeProjects: "Projetos Ativos",
     completedProjects: "Projetos Concluídos",
+    overview: "Visão Geral",
+    tasks: "Tarefas",
+    description: "Descrição",
+    consultant: "Consultor",
+    manager: "Gestor",
+    totalStages: "Total de Etapas",
+    completedStages: "Etapas Concluídas",
+    daysElapsed: "Dias Decorridos",
+    projectStages: "Etapas do Projeto",
+    stageStatus: {
+      pending: "Pendente",
+      in_progress: "Em Andamento",
+      validation: "Em Validação",
+      completed: "Concluída",
+      skipped: "Ignorada",
+    },
+    plannedHours: "Horas Planejadas",
+    actualHours: "Horas Realizadas",
+    noStages: "Nenhuma etapa configurada",
+    projectTasks: "Tarefas do Projeto",
+    activityTimeline: "Timeline de Atividades",
+    addNote: "Adicionar Nota",
+    uploadFile: "Enviar Arquivo",
+    sendUpdate: "Enviar Atualização",
+    generateReport: "Gerar Relatório",
+    loadError: "Erro ao carregar projeto",
+    loadErrorMessage:
+      "Não foi possível carregar os detalhes do projeto. Tente novamente.",
   },
 
-  // Task Status - UPDATED to match Prisma schema
   task: {
     status: {
       todo: "A Fazer",
@@ -134,7 +161,7 @@ export const ptBR = {
     noTasks: "Nenhuma tarefa encontrada",
   },
 
-  // Filters and Search - COMPLETE section
+  // Filters and Search
   filters: {
     all: "Todos",
     total: "Total",
@@ -212,7 +239,7 @@ export const ptBR = {
     noSystems: "Nenhum sistema encontrado",
   },
 
-  // Notifications - NEW from Prisma schema
+  // Notifications
   notification: {
     type: {
       project_assigned: "Projeto Atribuído",
@@ -233,7 +260,7 @@ export const ptBR = {
     noNotifications: "Nenhuma notificação",
   },
 
-  // Tickets - NEW from Prisma schema
+  // Tickets
   ticket: {
     type: {
       question: "Pergunta",
@@ -297,5 +324,9 @@ export const ptBR = {
     next: "Próximo",
     previous: "Anterior",
     finish: "Finalizar",
+    back: "Voltar",
+    goBack: "Voltar",
+    notDefined: "Não definido",
+    notAssigned: "Não atribuído",
   },
 };

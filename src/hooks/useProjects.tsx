@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "@/services/api";
-import type { Project, ApiResponse } from "@/types";
+import type { Project, ProjectStage, ApiResponse } from "@/types";
 
 interface ProjectsFilters {
   page?: number;
@@ -132,12 +132,12 @@ export const useDeleteProject = () => {
   });
 };
 
-// Hook to get project stages
+// Hook to get project stages - FIXED: Use ProjectStage[] instead of any[]
 export const useProjectStages = (projectId: string) => {
   return useQuery({
     queryKey: ["project-stages", projectId],
     queryFn: async () => {
-      const response = await apiClient.get<ApiResponse<unknown[]>>(
+      const response = await apiClient.get<ApiResponse<ProjectStage[]>>(
         `/projects/${projectId}/stages`
       );
       return response.data;
