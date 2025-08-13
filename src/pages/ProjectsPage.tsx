@@ -8,7 +8,6 @@ import {
   Badge,
   Grid,
   GridItem,
-  Select,
   Skeleton,
   Card,
   createListCollection,
@@ -20,6 +19,8 @@ import { Plus, Search, Filter, MoreHorizontal } from "lucide-react";
 import { MainLayout } from "@/components/Layout";
 import { ProjectCard } from "@/components/Dashboard/ProjectCard";
 import { useProjects } from "@/hooks/useProjects";
+import { CreateProjectModal } from "@/components/Projects/CreateProjectModal";
+import { CustomSelect } from "@/components/Common/CustomSelect";
 
 export const ProjectsPage = () => {
   const { t } = useTranslation();
@@ -27,6 +28,7 @@ export const ProjectsPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   // Fetch projects with filters
   const {
@@ -92,10 +94,7 @@ export const ProjectsPage = () => {
               _active={{ bg: "brand.700" }}
               borderRadius="xl"
               px={6}
-              onClick={() => {
-                // Future: open new project modal
-                console.log("Open new project modal");
-              }}
+              onClick={() => setIsCreateModalOpen(true)}
             >
               <Plus size={20} /> {t("project.createNew")}
             </Button>
@@ -210,34 +209,22 @@ export const ProjectsPage = () => {
 
               {/* Status Filter */}
               <Box minW="150px">
-                <Select.Root
+                <CustomSelect
                   collection={statusOptions}
-                  value={[statusFilter]}
-                  onValueChange={(details) => setStatusFilter(details.value[0])}
-                  size="sm"
-                >
-                  <Select.Trigger>
-                    <Select.ValueText placeholder={t("filters.status")} />
-                  </Select.Trigger>
-                  <Select.Content />
-                </Select.Root>
+                  value={statusFilter}
+                  onChange={setStatusFilter}
+                  placeholderKey="filters.status"
+                />
               </Box>
 
               {/* Priority Filter */}
               <Box minW="150px">
-                <Select.Root
+                <CustomSelect
                   collection={priorityOptions}
-                  value={[priorityFilter]}
-                  onValueChange={(details) =>
-                    setPriorityFilter(details.value[0])
-                  }
-                  size="sm"
-                >
-                  <Select.Trigger>
-                    <Select.ValueText placeholder={t("filters.priority")} />
-                  </Select.Trigger>
-                  <Select.Content />
-                </Select.Root>
+                  value={priorityFilter}
+                  onChange={setPriorityFilter}
+                  placeholderKey="filters.priority"
+                />
               </Box>
 
               {/* More filters button */}
@@ -366,9 +353,7 @@ export const ProjectsPage = () => {
                         _hover={{ bg: "brand.500" }}
                         borderRadius="xl"
                         mt={2}
-                        onClick={() => {
-                          console.log("Open new project modal");
-                        }}
+                        onClick={() => setIsCreateModalOpen(true)}
                       >
                         <Plus size={20} /> {t("projects.createFirst")}
                       </Button>
@@ -378,6 +363,12 @@ export const ProjectsPage = () => {
             </Card.Root>
           )}
         </Box>
+
+        {/* Create Project Modal */}
+        <CreateProjectModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+        />
       </VStack>
     </MainLayout>
   );

@@ -126,6 +126,37 @@ export const ptBR = {
     loadError: "Erro ao carregar projeto",
     loadErrorMessage:
       "Não foi possível carregar os detalhes do projeto. Tente novamente.",
+    // Modal specific
+    name: "Nome do Projeto",
+    namePlaceholder: "Digite o nome do projeto...",
+    descriptionPlaceholder: "Descreva os objetivos e escopo do projeto...",
+    company: "Empresa",
+    selectCompany: "Selecione a empresa",
+    selectSystem: "Selecione o sistema",
+    selectConsultant: "Selecione o consultor",
+    selectManager: "Selecione o gestor",
+
+    // Actions
+    create: "Criar Projeto",
+    creating: "Criando...",
+    createError: "Erro ao criar projeto. Tente novamente.",
+    createSuccess: "Projeto criado com sucesso!",
+  },
+
+  // Validation
+  validation: {
+    required: "Este campo é obrigatório",
+    invalidEmail: "E-mail inválido",
+    invalidNumber: "Número inválido",
+    endDateAfterStart: "Data de término deve ser posterior à data de início",
+    minLength: "Mínimo de {{count}} caracteres",
+    maxLength: "Máximo de {{count}} caracteres",
+    invalidCNPJ: "CNPJ inválido",
+    invalidPhone: "Telefone inválido",
+    passwordsDoNotMatch: "Senhas não coincidem",
+    invalidDate: "Data inválida",
+    futureDate: "Data deve ser futura",
+    pastDate: "Data deve ser passada",
   },
 
   task: {
@@ -199,6 +230,8 @@ export const ptBR = {
       technician: "Técnico",
       client: "Cliente",
     },
+    selectUser: "Selecione um usuário",
+    noUsers: "Nenhum usuário encontrado",
   },
 
   // Activities
@@ -226,6 +259,7 @@ export const ptBR = {
     createNew: "Nova Empresa",
     edit: "Editar Empresa",
     noCompanies: "Nenhuma empresa encontrada",
+    selectCompany: "Selecione uma empresa",
   },
 
   // Systems
@@ -237,6 +271,7 @@ export const ptBR = {
     createNew: "Novo Sistema",
     edit: "Editar Sistema",
     noSystems: "Nenhum sistema encontrado",
+    selectSystem: "Selecione um sistema",
   },
 
   // Notifications
@@ -328,5 +363,6 @@ export const ptBR = {
     goBack: "Voltar",
     notDefined: "Não definido",
     notAssigned: "Não atribuído",
+    selectOption: "Selecione uma opção",
   },
 };
