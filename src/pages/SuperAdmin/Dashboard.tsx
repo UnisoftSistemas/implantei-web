@@ -15,7 +15,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Building2, Users, Activity, TrendingUp } from "lucide-react";
 import { apiClient } from "@/services/api";
 import type { ApiResponse } from "@/types";
-import { useTenantStore } from "@/store/tenantStore";
 
 interface SuperAdminStats {
   totalTenants: number;
@@ -42,7 +41,6 @@ interface RecentActivity {
 
 export const SuperAdminDashboard = () => {
   const { t } = useTranslation();
-  const { isSuperAdmin } = useTenantStore();
 
   // Fetch super admin stats
   const { data: stats, isLoading: statsLoading } = useQuery({
@@ -53,7 +51,6 @@ export const SuperAdminDashboard = () => {
       );
       return response.data;
     },
-    enabled: !isSuperAdmin,
   });
 
   // Fetch recent activity
@@ -65,7 +62,6 @@ export const SuperAdminDashboard = () => {
       );
       return response.data;
     },
-    enabled: !isSuperAdmin,
   });
 
   const formatCurrency = (value: number) => {
