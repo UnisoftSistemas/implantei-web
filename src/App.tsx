@@ -11,6 +11,9 @@ import { DashboardPage } from "@/pages/DashboardPage";
 import { ProjectsPage } from "@/pages/ProjectsPage";
 import { ProjectDetailsPage } from "@/pages/ProjectDetailsPage";
 import { AuthGuard } from "@/components/AuthGuard";
+import { SuperAdminRoutes } from "./routes/SuperAdminRoutes";
+import { useTenantStore } from "./store/tenantStore";
+import { SmartRedirect } from "./components/SmartRedirect";
 
 function App() {
   const { t } = useTranslation();
@@ -19,10 +22,11 @@ function App() {
     setLoading,
     setUser,
     isLoading,
-    isAuthenticated,
     firebaseUser,
     user,
   } = useAuthStore();
+
+  const { isSuperAdmin } = useTenantStore();
 
   // Fetch user profile when Firebase user exists but backend user doesn't
   const { data: profileData, isLoading: profileLoading } = useUserProfile();
@@ -70,7 +74,11 @@ function App() {
           path="/dashboard"
           element={
             <AuthGuard>
-              <DashboardPage />
+              {isSuperAdmin ? (
+                <Navigate to="/super-admin/dashboard" replace />
+              ) : (
+                <DashboardPage />
+              )}
             </AuthGuard>
           }
         />
@@ -79,7 +87,11 @@ function App() {
           path="/projects"
           element={
             <AuthGuard>
-              <ProjectsPage />
+              {isSuperAdmin ? (
+                <Navigate to="/super-admin/dashboard" replace />
+              ) : (
+                <ProjectsPage />
+              )}
             </AuthGuard>
           }
         />
@@ -88,34 +100,30 @@ function App() {
           path="/projects/:id"
           element={
             <AuthGuard>
-              <ProjectDetailsPage />
+              {isSuperAdmin ? (
+                <Navigate to="/super-admin/dashboard" replace />
+              ) : (
+                <ProjectDetailsPage />
+              )}
+            </AuthGuard>
+          }
+        />
+
+        {/* Super Admin routes - protected by TenantGuard inside SuperAdminRoutes */}
+        <Route
+          path="/super-admin/*"
+          element={
+            <AuthGuard>
+              <SuperAdminRoutes />
             </AuthGuard>
           }
         />
 
         {/* Default redirect */}
-        <Route
-          path="/"
-          element={
-            isAuthenticated ? (
-              <Navigate to="/dashboard" replace />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          }
-        />
+        <Route path="/" element={<SmartRedirect />} />
 
         {/* Catch all - redirect to login or dashboard */}
-        <Route
-          path="*"
-          element={
-            isAuthenticated ? (
-              <Navigate to="/dashboard" replace />
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          }
-        />
+        <Route path="*" element={<SmartRedirect />} />
       </Routes>
     </Box>
   );

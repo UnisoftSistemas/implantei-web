@@ -35,6 +35,12 @@ export const ptBR = {
     relatorios: "Relatórios",
     configuracoes: "Configurações",
     notifications: "Notificações",
+    sa: {
+      dashboard: "Super Admin Dashboard",
+      manageTenants: "Gerenciar Empresas",
+      manageUsers: "Gerenciar Usuários",
+      settings: "Configurações",
+    }
   },
 
   // Dashboard
@@ -369,6 +375,11 @@ export const ptBR = {
     selectOption: "Selecione uma opção",
     active: "Ativo",
     inactive: "Inativo",
+    total: "total",
+    since: "desde",
+    deactivate: "Desativar",
+    activate: "Ativar",
+    pageOf: "Página {{current}} de {{total}}",
   },
 
   //Tenant
@@ -388,5 +399,52 @@ export const ptBR = {
     companies: "Empresas",
     noSegment: "Segmento não informado",
     noTenantsAvailable: "Nenhuma empresa disponível",
+  },
+
+  //Super Admin
+  superAdmin: {
+    dashboard: {
+      title: "Painel Super Admin",
+      subtitle: "Visão geral de todos os tenants e métricas do sistema",
+    },
+    stats: {
+      totalTenants: "Total de Empresas",
+      totalUsers: "Total de Usuários",
+      activeProjects: "Projetos Ativos",
+      monthlyRevenue: "Receita Mensal",
+      crossAllTenants: "em todas as empresas",
+      of: "de",
+      thisMonth: "este mês",
+    },
+    activity: {
+      title: "Atividade Recente",
+      subtitle: "Últimas ações realizadas no sistema",
+      noActivity: "Nenhuma atividade recente",
+    },
+    quickActions: {
+      title: "Ações Rápidas",
+    },
+    actions: {
+      manageTenants: "Gerenciar Empresas",
+      manageUsers: "Gerenciar Usuários",
+      viewReports: "Ver Relatórios",
+    },
+    tenants: {
+      title: "Gerenciar Empresas",
+      subtitle: "Controle e monitore todas as empresas do sistema",
+      searchPlaceholder: "Buscar empresas...",
+      createTenant: "Criar Empresa",
+      totalTenants: "Total de Empresas",
+      activeTenants: "Empresas Ativas",
+      users: "Usuários",
+      projects: "Projetos",
+      manageUsers: "Gerenciar Usuários",
+      viewProjects: "Ver Projetos",
+      noTenants: "Nenhuma empresa encontrada",
+      createFirstTenant: "Crie a primeira empresa do sistema",
+    },
+  },
+  companies: {
+    segment: "Segmento",
   },
 };

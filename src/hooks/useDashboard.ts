@@ -7,9 +7,11 @@ import type {
   Task,
   ApiResponse,
 } from "@/types";
+import { useTenantStore } from "@/store/tenantStore";
 
 // Hook to get dashboard statistics
 export const useDashboardStats = () => {
+  const { isSuperAdmin } = useTenantStore();
   return useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: async () => {
@@ -20,11 +22,13 @@ export const useDashboardStats = () => {
     },
     staleTime: 5 * 60 * 1000, // 5 minutes - stats can be cached
     refetchOnWindowFocus: false,
+    enabled: !isSuperAdmin,
   });
 };
 
 // Hook to get projects kanban view
 export const useDashboardProjects = () => {
+  const { isSuperAdmin } = useTenantStore();
   return useQuery({
     queryKey: ["dashboard-projects"],
     queryFn: async () => {
@@ -38,11 +42,13 @@ export const useDashboardProjects = () => {
     },
     staleTime: 2 * 60 * 1000, // 2 minutes
     refetchOnWindowFocus: false,
+    enabled: !isSuperAdmin,
   });
 };
 
 // Hook to get user's tasks
 export const useDashboardTasks = () => {
+  const { isSuperAdmin } = useTenantStore();
   return useQuery({
     queryKey: ["dashboard-tasks"],
     queryFn: async () => {
@@ -57,11 +63,13 @@ export const useDashboardTasks = () => {
     },
     staleTime: 1 * 60 * 1000, // 1 minute
     refetchOnWindowFocus: false,
+    enabled: !isSuperAdmin,
   });
 };
 
 // Hook to get timeline activities
 export const useDashboardTimeline = () => {
+  const { isSuperAdmin } = useTenantStore();
   return useQuery({
     queryKey: ["dashboard-timeline"],
     queryFn: async () => {
@@ -75,5 +83,6 @@ export const useDashboardTimeline = () => {
     },
     staleTime: 2 * 60 * 1000, // 2 minutes
     refetchOnWindowFocus: false,
+    enabled: !isSuperAdmin,
   });
 };

@@ -32,6 +32,13 @@ export const usePermissions = () => {
     "consultant",
   ].includes(user?.role || "");
 
+  const canAccessDashboard = [
+    "admin",
+    "manager",
+    "consultant",
+    "technician",
+  ].includes(user?.role || "");
+
   // Tenant-specific permission checks
   const canAccessTenant = (tenantId: string): boolean => {
     // Super admin can access any tenant
@@ -72,6 +79,7 @@ export const usePermissions = () => {
     canViewAllData,
     canManageProjects,
     canAssignTasks,
+    canAccessDashboard,
 
     // Tenant permissions
     canAccessTenant,

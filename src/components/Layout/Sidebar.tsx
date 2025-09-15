@@ -22,10 +22,12 @@ import {
   Menu,
   ChevronLeft,
   Lightbulb,
+  Building2,
 } from "lucide-react";
 import { useState } from "react";
 import type { ForwardRefExoticComponent, RefAttributes } from "react";
 import type { LucideProps } from "lucide-react";
+import { usePermissions } from "@/hooks/usePermissions";
 
 interface SidebarItemProps {
   icon: ForwardRefExoticComponent<
@@ -86,6 +88,7 @@ export const Sidebar = () => {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
+  const { canManageTenants } = usePermissions();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const menuItems = [
@@ -98,6 +101,25 @@ export const Sidebar = () => {
     { icon: Calendar, label: t("nav.calendario"), path: "/calendario" },
     { icon: FileText, label: t("nav.relatorios"), path: "/relatorios" },
     { icon: Settings, label: t("nav.configuracoes"), path: "/configuracoes" },
+  ];
+
+  const SAItems = [
+    {
+      icon: BarChart3,
+      label: t("nav.sa.dashboard"),
+      path: "/super-admin/dashboard",
+    },
+    {
+      icon: Building2,
+      label: t("nav.sa.manageTenants"),
+      path: "/super-admin/tenants",
+    },
+    { icon: Users, label: t("nav.sa.manageUsers"), path: "/super-admin/users" },
+    {
+      icon: Settings,
+      label: t("nav.sa.settings"),
+      path: "/super-admin/settings",
+    },
   ];
 
   const toggleCollapse = () => {
@@ -145,66 +167,85 @@ export const Sidebar = () => {
       </Box>
 
       {/* Navigation */}
-      <Box px={isCollapsed ? 2 : 4} pb={6}>
-        <VStack gap={1} align="stretch">
-          {menuItems.map((item) => (
-            <SidebarItem
-              key={item.path}
-              icon={item.icon}
-              label={item.label}
-              path={item.path}
-              isActive={location.pathname === item.path}
-              isCollapsed={isCollapsed}
-              onClick={() => navigate(item.path)}
-            />
-          ))}
-        </VStack>
+      {canManageTenants ? (
+        <Box px={6} py={2}>
+          <VStack gap={1} align="stretch">
+            {/* Super Admin Dashboard */}
+            {SAItems.map((item) => (
+              <SidebarItem
+                key={item.path}
+                icon={item.icon}
+                label={item.label}
+                path={item.path}
+                isActive={location.pathname === item.path}
+                isCollapsed={isCollapsed}
+                onClick={() => navigate(item.path)}
+              />
+            ))}
+          </VStack>
+        </Box>
+      ) : (
+        <Box px={isCollapsed ? 2 : 4} pb={6}>
+          <VStack gap={1} align="stretch">
+            {menuItems.map((item) => (
+              <SidebarItem
+                key={item.path}
+                icon={item.icon}
+                label={item.label}
+                path={item.path}
+                isActive={location.pathname === item.path}
+                isCollapsed={isCollapsed}
+                onClick={() => navigate(item.path)}
+              />
+            ))}
+          </VStack>
 
-        {/* Bottom tip card - only show when expanded */}
-        {!isCollapsed && (
-          <Box mt={8} mx={2}>
-            <Box
-              p={4}
-              bg="brand.800"
-              borderRadius="xl"
-              position="relative"
-              overflow="hidden"
-            >
-              <VStack gap={2} align="start" position="relative">
-                <HStack gap={2}>
-                  <Lightbulb size={16} color="#FCF553" />
-                  <Text fontSize="sm" fontWeight="semibold" color="#FCF553">
-                    {t("tips.dailyTip")}
+          {/* Bottom tip card - only show when expanded */}
+          {!isCollapsed && (
+            <Box mt={8} mx={2}>
+              <Box
+                p={4}
+                bg="brand.800"
+                borderRadius="xl"
+                position="relative"
+                overflow="hidden"
+              >
+                <VStack gap={2} align="start" position="relative">
+                  <HStack gap={2}>
+                    <Lightbulb size={16} color="#FCF553" />
+                    <Text fontSize="sm" fontWeight="semibold" color="#FCF553">
+                      {t("tips.dailyTip")}
+                    </Text>
+                  </HStack>
+                  <Text
+                    fontSize="xs"
+                    color="white"
+                    lineHeight="1.4"
+                    opacity="0.9"
+                  >
+                    {t("tips.addMilestones")}
                   </Text>
-                </HStack>
-                <Text
-                  fontSize="xs"
-                  color="white"
-                  lineHeight="1.4"
-                  opacity="0.9"
-                >
-                  {t("tips.addMilestones")}
-                </Text>
-              </VStack>
+                </VStack>
+              </Box>
             </Box>
-          </Box>
-        )}
+          )}
 
-        {/* Collapsed tip - just icon */}
-        {isCollapsed && (
-          <Box mt={8} display="flex" justifyContent="center">
-            <Box
-              p={3}
-              bg="brand.800"
-              borderRadius="lg"
-              cursor="pointer"
-              title={`${t("tips.dailyTip")}: ${t("tips.addMilestones")}`}
-            >
-              <Lightbulb size={20} color="#FCF553" />
+          {/* Collapsed tip - just icon */}
+          {isCollapsed && (
+            <Box mt={8} display="flex" justifyContent="center">
+              <Box
+                p={3}
+                bg="brand.800"
+                borderRadius="lg"
+                cursor="pointer"
+                title={`${t("tips.dailyTip")}: ${t("tips.addMilestones")}`}
+              >
+                <Lightbulb size={20} color="#FCF553" />
+              </Box>
             </Box>
-          </Box>
-        )}
-      </Box>
+          )}
+        </Box>
+      )}
     </Box>
   );
 };

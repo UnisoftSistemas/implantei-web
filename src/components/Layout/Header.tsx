@@ -11,15 +11,12 @@ import {
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "@/store/authStore";
-import { useTenantStore } from "@/store/tenantStore";
 import { useLogout } from "@/hooks/useAuth";
 import { TenantSwitcher } from "@/components/Tenant/TenantSwitcher";
 
 export const Header = () => {
   const { t } = useTranslation();
   const { user } = useAuthStore();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { isSuperAdmin } = useTenantStore();
   const logoutMutation = useLogout();
 
   const handleLogout = () => {
