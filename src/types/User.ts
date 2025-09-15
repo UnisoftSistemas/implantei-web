@@ -1,5 +1,6 @@
 import type { UserRole } from "./Enums";
 
+// MULTI-TENANT: Updated User interface with tenantCompanyId
 export interface User {
   id: string;
   name: string;
@@ -9,10 +10,12 @@ export interface User {
   role: UserRole;
   profileImageUrl?: string;
   active: boolean;
+  tenantCompanyId?: string | null; // Multi-tenant support
   createdAt: string;
   updatedAt: string;
 }
 
+// MULTI-TENANT: Updated UserProfile with tenant info
 export interface UserProfile {
   id: string;
   name: string;
@@ -21,9 +24,10 @@ export interface UserProfile {
   role: UserRole;
   profileImageUrl?: string;
   active: boolean;
+  tenantCompanyId?: string | null; // Multi-tenant support
 }
 
-// Auth related interfaces
+// Auth related interfaces - keeping existing structure
 export interface LoginCredentials {
   email: string;
   password: string;
@@ -35,17 +39,4 @@ export interface RegisterData {
   password: string;
   phone?: string;
   role?: UserRole;
-}
-
-// Adicionar estes tipos que já existem em useAuth.ts:
-export interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-export interface RegisterData {
-  name: string;
-  email: string;
-  password: string;
-  phone?: string;
 }

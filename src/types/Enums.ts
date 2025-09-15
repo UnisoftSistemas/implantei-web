@@ -1,5 +1,6 @@
-// User roles
+// MULTI-TENANT: Updated User roles with super_admin
 export type UserRole =
+  | "super_admin" // Multi-tenant super administrator
   | "admin"
   | "manager"
   | "consultant"

@@ -24,3 +24,4 @@ export type { Notification } from "@/types/Notification";
 export type { Ticket } from "@/types/Ticket";
 export type { DashboardStats, Activity } from "@/types/Dashboard";
 export type { ApiResponse, PaginatedResponse } from "@/types/Api";
+export type { ITenant, ITenantUser, IFirebaseUser } from "@/types/Tenant";
