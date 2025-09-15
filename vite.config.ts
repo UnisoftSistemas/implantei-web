@@ -36,6 +36,7 @@ export default defineConfig({
       "127.0.0.1",
       "implantei-web-production.up.railway.app",
       ".railway.app",
+      ".implantei.com.br",
     ],
   },
 });
