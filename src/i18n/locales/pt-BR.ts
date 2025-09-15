@@ -19,6 +19,8 @@ export const ptBR = {
     allRightsReserved: "Todos os direitos reservados",
     accessDenied: "Acesso Negado",
     noPermission: "Você não tem permissão para acessar esta página.",
+    loading: "Carregando sistema...",
+    loadingSubtitle: "Verificando permissões e configurações",
   },
 
   // Navigation
@@ -224,6 +226,7 @@ export const ptBR = {
     active: "Ativo",
     inactive: "Inativo",
     roles: {
+      super_admin: "Super Admin",
       admin: "Administrador",
       manager: "Gestor",
       consultant: "Consultor",
@@ -364,5 +367,26 @@ export const ptBR = {
     notDefined: "Não definido",
     notAssigned: "Não atribuído",
     selectOption: "Selecione uma opção",
+    active: "Ativo",
+    inactive: "Inativo",
+  },
+
+  //Tenant
+  tenant: {
+    switchTenant: "Trocar Empresa",
+    globalView: "Visão Global",
+    superAdmin: "Super Admin",
+    tenantAdmin: "Administrador",
+    manageTenants: "Gerenciar Empresas",
+    createTenant: "Criar Empresa",
+    tenantUsers: "Usuários da Empresa",
+    loading: "Carregando...",
+    noTenant: "Empresa não definida",
+    selectTenant: "Selecionar Empresa",
+    allTenants: "{{count}} empresas disponíveis",
+    allTenantsAccess: "Acesso a todas as empresas",
+    companies: "Empresas",
+    noSegment: "Segmento não informado",
+    noTenantsAvailable: "Nenhuma empresa disponível",
   },
 };
