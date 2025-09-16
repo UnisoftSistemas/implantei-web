@@ -11,7 +11,7 @@ export const useTenantAuth = () => {
     useTenantStore();
 
   // Check if user is super admin
-  const isSuperAdmin = user?.role === "super_admin" || !user?.tenantCompanyId;
+  const isSuperAdmin = user?.role === "super_admin";
 
   // Fetch current tenant data for non-super admin users
   const { data: currentTenantData } = useQuery({

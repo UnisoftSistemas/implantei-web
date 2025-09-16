@@ -14,6 +14,7 @@ import { AuthGuard } from "@/components/AuthGuard";
 import { SuperAdminRoutes } from "./routes/SuperAdminRoutes";
 import { useTenantStore } from "./store/tenantStore";
 import { SmartRedirect } from "./components/SmartRedirect";
+import { AuthDebug } from "./components/Debug/AuthDebug";
 
 function App() {
   const { t } = useTranslation();
@@ -125,6 +126,7 @@ function App() {
         {/* Catch all - redirect to login or dashboard */}
         <Route path="*" element={<SmartRedirect />} />
       </Routes>
+      <AuthDebug />
     </Box>
   );
 }
