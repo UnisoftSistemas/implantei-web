@@ -40,7 +40,7 @@ export const ptBR = {
       manageTenants: "Gerenciar Empresas",
       manageUsers: "Gerenciar Usuários",
       settings: "Configurações",
-    }
+    },
   },
 
   // Dashboard
@@ -380,6 +380,10 @@ export const ptBR = {
     deactivate: "Desativar",
     activate: "Ativar",
     pageOf: "Página {{current}} de {{total}}",
+    actions: "Ações",
+    viewDetails: "Ver Detalhes",
+    createdAt: "Criado em",
+    updatedAt: "Atualizado em",
   },
 
   //Tenant
@@ -442,9 +446,25 @@ export const ptBR = {
       viewProjects: "Ver Projetos",
       noTenants: "Nenhuma empresa encontrada",
       createFirstTenant: "Crie a primeira empresa do sistema",
+      editTenant: "Editar Empresa",
+      confirmDelete: "Tem certeza que deseja excluir a empresa {{name}}?",
+      creating: "Criando...",
+      updating: "Atualizando...",
+      basicInfo: "Informações Básicas",
+      contactInfo: "Informações de Contato",
+      statistics: "Estatísticas",
+      timeline: "Histórico",
+      daysActive: "Dias Ativo",
     },
   },
   companies: {
+    name: "Nome da Empresa",
+    namePlaceholder: "Digite o nome da empresa",
     segment: "Segmento",
+    segmentPlaceholder: "Ex: Tecnologia, Saúde, Educação",
+    contactPerson: "Pessoa de Contato",
+    contactPersonPlaceholder: "Nome do responsável",
+    email: "E-mail",
+    phone: "Telefone",
   },
 };

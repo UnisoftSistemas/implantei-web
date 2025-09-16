@@ -40,7 +40,7 @@ export const enUS = {
       manageTenants: "Manage Tenants",
       manageUsers: "Manage Users",
       settings: "Settings",
-    }
+    },
   },
 
   // Dashboard
@@ -378,6 +378,10 @@ export const enUS = {
     deactivate: "Deactivate",
     activate: "Activate",
     pageOf: "Page {{current}} of {{total}}",
+    actions: "Actions",
+    viewDetails: "View Details",
+    createdAt: "Created at",
+    updatedAt: "Updated at",
   },
 
   // Tenant
@@ -440,9 +444,25 @@ export const enUS = {
       viewProjects: "View Projects",
       noTenants: "No companies found",
       createFirstTenant: "Create the first system company",
+      editTenant: "Edit Company",
+      confirmDelete: "Are you sure you want to delete the company {{name}}?",
+      creating: "Creating...",
+      updating: "Updating...",
+      basicInfo: "Basic Information",
+      contactInfo: "Contact Information",
+      statistics: "Statistics",
+      timeline: "Timeline",
+      daysActive: "Days Active",
     },
   },
   companies: {
+    name: "Company Name",
+    namePlaceholder: "Enter company name",
     segment: "Segment",
+    segmentPlaceholder: "Ex: Technology, Healthcare, Education",
+    contactPerson: "Contact Person",
+    contactPersonPlaceholder: "Responsible person name",
+    email: "Email",
+    phone: "Phone",
   },
 };

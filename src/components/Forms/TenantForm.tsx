@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import {
   VStack,
   HStack,
@@ -9,9 +9,14 @@ import {
   GridItem,
   Box,
   Badge,
+  Field,
 } from "@chakra-ui/react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslation } from "react-i18next";
+import { tenantFormSchema, type TenantFormData } from "@/schemas/tenant";
 import type { ITenant } from "@/types";
+import { formatCNPJ } from "@/utils/cnpj";
 
 interface TenantFormProps {
   tenant?: ITenant | null;
@@ -19,18 +24,6 @@ interface TenantFormProps {
   onCancel: () => void;
   isLoading?: boolean;
   mode: "create" | "edit";
-}
-
-export interface TenantFormData {
-  name: string;
-  cnpj: string;
-  email?: string;
-  phone?: string;
-  segment?: string;
-  contactPerson?: string;
-  address?: string;
-  active: boolean;
-  isTenant: boolean;
 }
 
 export const TenantForm = ({
@@ -42,120 +35,97 @@ export const TenantForm = ({
 }: TenantFormProps) => {
   const { t } = useTranslation();
 
-  // Form state
-  const [formData, setFormData] = useState<TenantFormData>({
-    name: tenant?.name || "",
-    cnpj: tenant?.cnpj || "",
-    email: tenant?.email || "",
-    phone: tenant?.phone || "",
-    segment: tenant?.segment || "",
-    contactPerson: tenant?.contactPerson || "",
-    address: "", // Not in ITenant interface, but common field
-    active: tenant?.active ?? true,
-    isTenant: tenant?.isTenant ?? true, // Always true for tenant creation
+  // React Hook Form setup
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: zodResolver(tenantFormSchema),
+    defaultValues: {
+      name: "",
+      cnpj: "",
+      email: "",
+      phone: "",
+      segment: "",
+      contactPerson: "",
+      active: true,
+      isTenant: true,
+    },
   });
 
-  // Form validation
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  // Watch values for formatting
+  const cnpjValue = watch("cnpj");
+  const phoneValue = watch("phone");
 
-  const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {};
-
-    // Required fields
-    if (!formData.name.trim()) {
-      newErrors.name = t("validation.required");
+  // Set form values when tenant data is available (edit mode)
+  useEffect(() => {
+    if (tenant && mode === "edit") {
+      reset({
+        name: tenant.name || "",
+        cnpj: tenant.cnpj || "",
+        email: tenant.email || "",
+        phone: tenant.phone || "",
+        segment: tenant.segment || "",
+        contactPerson: tenant.contactPerson || "",
+        active: tenant.active,
+        isTenant: true, // Always true for tenants
+      });
     }
+  }, [tenant, mode, reset]);
 
-    if (!formData.cnpj.trim()) {
-      newErrors.cnpj = t("validation.required");
-    } else if (!isValidCNPJ(formData.cnpj)) {
-      newErrors.cnpj = t("validation.invalidCNPJ");
-    }
+  // Format CNPJ - using backend function
+  // Already imported from @/utils/cnpj
 
-    if (formData.email && !isValidEmail(formData.email)) {
-      newErrors.email = t("validation.invalidEmail");
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  // Helper functions
-  const isValidCNPJ = (cnpj: string): boolean => {
-    // Remove non-numeric characters
-    const cleanCNPJ = cnpj.replace(/\D/g, "");
-    return cleanCNPJ.length === 14;
-  };
-
-  const isValidEmail = (email: string): boolean => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const formatCNPJ = (value: string): string => {
-    const cleanValue = value.replace(/\D/g, "");
-
-    if (cleanValue.length <= 14) {
-      return cleanValue.replace(
-        /^(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})$/,
-        "$1.$2.$3/$4-$5"
-      );
-    }
-
-    return cleanValue;
-  };
-
+  // Format Phone
   const formatPhone = (value: string): string => {
     const cleanValue = value.replace(/\D/g, "");
 
     if (cleanValue.length <= 11) {
-      return cleanValue.replace(/^(\d{2})(\d{4,5})(\d{4})$/, "($1) $2-$3");
+      if (cleanValue.length <= 10) {
+        return cleanValue.replace(/^(\d{2})(\d{4})(\d{4})$/, "($1) $2-$3");
+      } else {
+        return cleanValue.replace(/^(\d{2})(\d{5})(\d{4})$/, "($1) $2-$3");
+      }
     }
 
-    return cleanValue;
+    return cleanValue.substring(0, 11);
   };
 
-  const handleInputChange = (
-    field: keyof TenantFormData,
-    value: string | boolean
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors((prev) => ({
-        ...prev,
-        [field]: "",
-      }));
-    }
+  // Handle CNPJ formatting
+  const handleCNPJChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedValue = formatCNPJ(e.target.value);
+    setValue("cnpj", formattedValue, { shouldValidate: true });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Handle Phone formatting
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formattedValue = formatPhone(e.target.value);
+    setValue("phone", formattedValue, { shouldValidate: true });
+  };
 
-    if (validateForm()) {
-      onSubmit(formData);
-    }
+  const onFormSubmit = (data: TenantFormData) => {
+    onSubmit(data);
   };
 
   return (
     <Box>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(onFormSubmit)}>
         <VStack gap={6} align="stretch">
           {/* Header with mode indicator */}
           <HStack justify="space-between" align="center">
             <Text fontSize="lg" fontWeight="bold" color="gray.800">
               {mode === "create"
-                ? t("tenants.createTenant")
-                : t("tenants.editTenant")}
+                ? t("superAdmin.tenants.createTenant")
+                : t("superAdmin.tenants.editTenant")}
             </Text>
 
-            {mode === "edit" && (
-              <Badge colorScheme={formData.active ? "green" : "red"} size="sm">
-                {formData.active ? t("common.active") : t("common.inactive")}
+            {mode === "edit" && tenant && (
+              <Badge colorScheme={tenant.active ? "green" : "red"} size="sm">
+                {tenant.active ? t("common.active") : t("common.inactive")}
               </Badge>
             )}
           </HStack>
@@ -163,95 +133,60 @@ export const TenantForm = ({
           {/* Basic Information */}
           <Box>
             <Text fontSize="md" fontWeight="medium" color="gray.700" mb={3}>
-              {t("tenants.basicInfo")}
+              {t("superAdmin.tenants.basicInfo")}
             </Text>
 
             <Grid templateColumns="repeat(2, 1fr)" gap={4}>
               {/* Company Name */}
               <GridItem colSpan={{ base: 2, md: 1 }}>
-                <VStack align="stretch" gap={1}>
-                  <Text fontSize="sm" fontWeight="medium" color="gray.600">
-                    {t("companies.name")} *
-                  </Text>
+                <Field.Root invalid={!!errors.name}>
+                  <Field.Label>{t("companies.name")} *</Field.Label>
                   <Input
-                    value={formData.name}
-                    onChange={(e) => handleInputChange("name", e.target.value)}
+                    {...register("name")}
                     placeholder={t("companies.namePlaceholder")}
-                    borderColor={errors.name ? "red.300" : "gray.300"}
-                    _focus={{
-                      borderColor: errors.name ? "red.500" : "brand.500",
-                      boxShadow: `0 0 0 1px ${
-                        errors.name ? "red.500" : "brand.500"
-                      }`,
-                    }}
+                    disabled={isLoading}
                   />
-                  {errors.name && (
-                    <Text fontSize="xs" color="red.500">
-                      {errors.name}
-                    </Text>
-                  )}
-                </VStack>
+                  <Field.ErrorText>{errors.name?.message}</Field.ErrorText>
+                </Field.Root>
               </GridItem>
 
               {/* CNPJ */}
               <GridItem colSpan={{ base: 2, md: 1 }}>
-                <VStack align="stretch" gap={1}>
-                  <Text fontSize="sm" fontWeight="medium" color="gray.600">
-                    CNPJ *
-                  </Text>
+                <Field.Root invalid={!!errors.cnpj}>
+                  <Field.Label>CNPJ *</Field.Label>
                   <Input
-                    value={formData.cnpj}
-                    onChange={(e) =>
-                      handleInputChange("cnpj", formatCNPJ(e.target.value))
-                    }
+                    value={cnpjValue}
+                    onChange={handleCNPJChange}
                     placeholder="00.000.000/0000-00"
                     maxLength={18}
-                    borderColor={errors.cnpj ? "red.300" : "gray.300"}
-                    _focus={{
-                      borderColor: errors.cnpj ? "red.500" : "brand.500",
-                      boxShadow: `0 0 0 1px ${
-                        errors.cnpj ? "red.500" : "brand.500"
-                      }`,
-                    }}
+                    disabled={isLoading}
                   />
-                  {errors.cnpj && (
-                    <Text fontSize="xs" color="red.500">
-                      {errors.cnpj}
-                    </Text>
-                  )}
-                </VStack>
+                  <Field.ErrorText>{errors.cnpj?.message}</Field.ErrorText>
+                </Field.Root>
               </GridItem>
 
               {/* Segment */}
               <GridItem colSpan={{ base: 2, md: 1 }}>
-                <VStack align="stretch" gap={1}>
-                  <Text fontSize="sm" fontWeight="medium" color="gray.600">
-                    {t("companies.segment")}
-                  </Text>
+                <Field.Root>
+                  <Field.Label>{t("companies.segment")}</Field.Label>
                   <Input
-                    value={formData.segment}
-                    onChange={(e) =>
-                      handleInputChange("segment", e.target.value)
-                    }
+                    {...register("segment")}
                     placeholder={t("companies.segmentPlaceholder")}
+                    disabled={isLoading}
                   />
-                </VStack>
+                </Field.Root>
               </GridItem>
 
               {/* Contact Person */}
               <GridItem colSpan={{ base: 2, md: 1 }}>
-                <VStack align="stretch" gap={1}>
-                  <Text fontSize="sm" fontWeight="medium" color="gray.600">
-                    {t("companies.contactPerson")}
-                  </Text>
+                <Field.Root>
+                  <Field.Label>{t("companies.contactPerson")}</Field.Label>
                   <Input
-                    value={formData.contactPerson}
-                    onChange={(e) =>
-                      handleInputChange("contactPerson", e.target.value)
-                    }
+                    {...register("contactPerson")}
                     placeholder={t("companies.contactPersonPlaceholder")}
+                    disabled={isLoading}
                   />
-                </VStack>
+                </Field.Root>
               </GridItem>
             </Grid>
           </Box>
@@ -259,52 +194,36 @@ export const TenantForm = ({
           {/* Contact Information */}
           <Box>
             <Text fontSize="md" fontWeight="medium" color="gray.700" mb={3}>
-              {t("tenants.contactInfo")}
+              {t("superAdmin.tenants.contactInfo")}
             </Text>
 
             <Grid templateColumns="repeat(2, 1fr)" gap={4}>
               {/* Email */}
               <GridItem colSpan={{ base: 2, md: 1 }}>
-                <VStack align="stretch" gap={1}>
-                  <Text fontSize="sm" fontWeight="medium" color="gray.600">
-                    {t("companies.email")}
-                  </Text>
+                <Field.Root invalid={!!errors.email}>
+                  <Field.Label>{t("companies.email")}</Field.Label>
                   <Input
+                    {...register("email")}
                     type="email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange("email", e.target.value)}
                     placeholder="empresa@exemplo.com"
-                    borderColor={errors.email ? "red.300" : "gray.300"}
-                    _focus={{
-                      borderColor: errors.email ? "red.500" : "brand.500",
-                      boxShadow: `0 0 0 1px ${
-                        errors.email ? "red.500" : "brand.500"
-                      }`,
-                    }}
+                    disabled={isLoading}
                   />
-                  {errors.email && (
-                    <Text fontSize="xs" color="red.500">
-                      {errors.email}
-                    </Text>
-                  )}
-                </VStack>
+                  <Field.ErrorText>{errors.email?.message}</Field.ErrorText>
+                </Field.Root>
               </GridItem>
 
               {/* Phone */}
               <GridItem colSpan={{ base: 2, md: 1 }}>
-                <VStack align="stretch" gap={1}>
-                  <Text fontSize="sm" fontWeight="medium" color="gray.600">
-                    {t("companies.phone")}
-                  </Text>
+                <Field.Root>
+                  <Field.Label>{t("companies.phone")}</Field.Label>
                   <Input
-                    value={formData.phone}
-                    onChange={(e) =>
-                      handleInputChange("phone", formatPhone(e.target.value))
-                    }
+                    value={phoneValue}
+                    onChange={handlePhoneChange}
                     placeholder="(11) 99999-9999"
                     maxLength={15}
+                    disabled={isLoading}
                   />
-                </VStack>
+                </Field.Root>
               </GridItem>
             </Grid>
           </Box>
@@ -327,11 +246,13 @@ export const TenantForm = ({
               loading={isLoading}
               loadingText={
                 mode === "create"
-                  ? t("tenants.creating")
-                  : t("tenants.updating")
+                  ? t("superAdmin.tenants.creating")
+                  : t("superAdmin.tenants.updating")
               }
             >
-              {mode === "create" ? t("tenants.createTenant") : t("common.save")}
+              {mode === "create"
+                ? t("superAdmin.tenants.createTenant")
+                : t("common.save")}
             </Button>
           </HStack>
         </VStack>
@@ -339,3 +260,6 @@ export const TenantForm = ({
     </Box>
   );
 };
+
+// Export type for backward compatibility
+export type { TenantFormData };
