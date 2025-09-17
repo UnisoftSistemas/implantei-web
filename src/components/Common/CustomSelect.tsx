@@ -1,22 +1,6 @@
 import { Select, Portal } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
-import type { ListCollection } from "@chakra-ui/react";
-
-export interface SelectOption {
-  label: string;
-  value: string;
-}
-
-interface CustomSelectProps {
-  collection: ListCollection<SelectOption>;
-  value?: string;
-  onChange: (value: string) => void;
-  placeholderKey?: string;
-  placeholder?: string;
-  disabled?: boolean;
-  bg?: string;
-  size?: "sm" | "md" | "lg";
-}
+import type { CustomSelectProps } from "@/types/CustomSelectProps";
 
 export const CustomSelect = ({
   collection,

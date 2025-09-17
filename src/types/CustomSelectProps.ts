@@ -10,3 +10,8 @@ export interface CustomSelectProps {
   bg?: string;
   size?: "sm" | "md" | "lg";
 }
+
+export interface SelectOption {
+  label: string;
+  value: string;
+}
