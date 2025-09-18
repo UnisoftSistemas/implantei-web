@@ -28,38 +28,40 @@ import {
   Trash2,
   Power,
   PowerOff,
-  Key,
   Filter,
   Users,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { apiClient } from "@/services/api";
 import { UserModal } from "@/components/Modals/UserModal";
 import { UserDetailsModal } from "@/components/Modals/UserDetailsModal";
 import { CustomSelect } from "@/components/Common/CustomSelect";
 import { useTenantStore } from "@/store/tenantStore";
-import {
-  useToggleUserStatus,
-  useDeleteUser,
-  useResetUserPassword,
-} from "@/hooks/useUserMutations";
+import { useToggleUserStatus, useDeleteUser } from "@/hooks/useUserMutations";
 import { USER_ROLE_OPTIONS } from "@/schemas/user";
-import type {
-  User,
-  PaginatedResponse,
-  ITenant,
-  UserRole,
-  ApiResponse,
-} from "@/types";
+import type { User, ApiResponse, ITenant, UserRole } from "@/types";
+
+interface UsersApiResponse {
+  success: boolean;
+  data: User[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    pages: number;
+  };
+}
 
 export const UsersPage = () => {
   const { t } = useTranslation();
+  const { tenantId: urlTenantId } = useParams();
   const { isSuperAdmin, currentTenant } = useTenantStore();
 
   // State management
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRole, setSelectedRole] = useState<UserRole | "">("");
-  const [selectedTenantId, setSelectedTenantId] = useState("");
+  const [selectedTenantId, setSelectedTenantId] = useState(urlTenantId || "");
   const [page, setPage] = useState(1);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [modalState, setModalState] = useState<{
@@ -72,10 +74,16 @@ export const UsersPage = () => {
     details: false,
   });
 
+  // Update tenant filter when URL param changes
+  useEffect(() => {
+    if (urlTenantId) {
+      setSelectedTenantId(urlTenantId);
+    }
+  }, [urlTenantId]);
+
   // Mutations
   const toggleStatusMutation = useToggleUserStatus();
   const deleteUserMutation = useDeleteUser();
-  const resetPasswordMutation = useResetUserPassword();
 
   // Fetch available tenants (for super admin filtering)
   const { data: tenantsData } = useQuery({
@@ -102,7 +110,7 @@ export const UsersPage = () => {
         ...(isSuperAdmin && selectedTenantId && { tenantId: selectedTenantId }),
       });
 
-      const response = await apiClient.get<PaginatedResponse<User>>(
+      const response = await apiClient.get<UsersApiResponse>(
         `/users?${params.toString()}`
       );
       return response;
@@ -156,7 +164,10 @@ export const UsersPage = () => {
   // Handle user actions
   const handleToggleStatus = async (user: User) => {
     try {
-      await toggleStatusMutation.mutateAsync(user.id);
+      await toggleStatusMutation.mutateAsync({
+        userId: user.id,
+        active: !user.active,
+      });
     } catch (error) {
       console.error("Toggle status error:", error);
     }
@@ -170,21 +181,6 @@ export const UsersPage = () => {
         await deleteUserMutation.mutateAsync(user.id);
       } catch (error) {
         console.error("Delete user error:", error);
-      }
-    }
-  };
-
-  const handleResetPassword = async (user: User) => {
-    const newPassword = prompt(t("superAdmin.users.enterNewPassword"));
-    if (newPassword && newPassword.length >= 6) {
-      try {
-        await resetPasswordMutation.mutateAsync({
-          userId: user.id,
-          newPassword,
-        });
-        alert(t("superAdmin.users.passwordResetSuccess"));
-      } catch (error) {
-        console.error("Reset password error:", error);
       }
     }
   };
@@ -348,14 +344,6 @@ export const UsersPage = () => {
                                 </Menu.Item>
 
                                 <Menu.Item
-                                  value="resetPassword"
-                                  onClick={() => handleResetPassword(user)}
-                                >
-                                  <Key size={16} />
-                                  {t("superAdmin.users.resetPassword")}
-                                </Menu.Item>
-
-                                <Menu.Item
                                   value="toggleStatus"
                                   onClick={() => handleToggleStatus(user)}
                                 >
@@ -473,7 +461,7 @@ export const UsersPage = () => {
         {/* Pagination */}
         {usersResponse &&
           usersResponse.pagination &&
-          usersResponse.pagination.totalPages > 1 && (
+          usersResponse.pagination.pages > 1 && (
             <HStack justify="center" gap={2}>
               <Button
                 variant="outline"
@@ -487,7 +475,7 @@ export const UsersPage = () => {
               <Text fontSize="sm" color="gray.600">
                 {t("common.pageOf", {
                   current: page,
-                  total: usersResponse.pagination.totalPages,
+                  total: usersResponse.pagination.pages,
                 })}
               </Text>
 
@@ -495,7 +483,7 @@ export const UsersPage = () => {
                 variant="outline"
                 size="sm"
                 onClick={() => setPage((p) => p + 1)}
-                disabled={page >= usersResponse.pagination.totalPages}
+                disabled={page >= usersResponse.pagination.pages}
               >
                 {t("common.next")}
               </Button>

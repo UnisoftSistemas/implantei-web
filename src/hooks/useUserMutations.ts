@@ -57,14 +57,21 @@ export const useUpdateUser = () => {
   });
 };
 
-// Toggle user active status mutation
+// Toggle user active status mutation (using PUT with only active field)
 export const useToggleUserStatus = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (userId: string) => {
+    mutationFn: async ({
+      userId,
+      active,
+    }: {
+      userId: string;
+      active: boolean;
+    }) => {
       const response = await apiClient.put<ApiResponse<User>>(
-        `/users/${userId}/toggle-status`
+        `/users/${userId}`,
+        { active }
       );
       return response.data;
     },
@@ -78,7 +85,7 @@ export const useToggleUserStatus = () => {
   });
 };
 
-// Delete user mutation
+// Delete user mutation (soft delete - sets active: false)
 export const useDeleteUser = () => {
   const queryClient = useQueryClient();
 
@@ -97,34 +104,6 @@ export const useDeleteUser = () => {
     },
     onError: (error) => {
       console.error("Delete user error:", error);
-    },
-  });
-};
-
-// Reset user password mutation
-export const useResetUserPassword = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({
-      userId,
-      newPassword,
-    }: {
-      userId: string;
-      newPassword: string;
-    }) => {
-      const response = await apiClient.put<ApiResponse<{ success: boolean }>>(
-        `/users/${userId}/reset-password`,
-        { password: newPassword }
-      );
-      return response.data;
-    },
-    onSuccess: () => {
-      // Invalidate user queries
-      queryClient.invalidateQueries({ queryKey: ["users"] });
-    },
-    onError: (error) => {
-      console.error("Reset password error:", error);
     },
   });
 };

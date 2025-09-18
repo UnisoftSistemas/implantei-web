@@ -39,9 +39,11 @@ import {
   useDeleteTenant,
 } from "@/hooks/useTenantMutations";
 import type { ITenant, PaginatedResponse } from "@/types";
+import { useNavigate } from "react-router-dom";
 
 export const TenantsPage = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   // State management
   const [searchTerm, setSearchTerm] = useState("");
@@ -123,8 +125,7 @@ export const TenantsPage = () => {
   };
 
   const handleManageUsers = (tenant: ITenant) => {
-    // TODO: Navigate to users management page
-    console.log("Manage users for tenant:", tenant.id);
+    navigate(`/super-admin/users/${tenant.id}`);
   };
 
   const formatDate = (dateString: string | Date) => {
