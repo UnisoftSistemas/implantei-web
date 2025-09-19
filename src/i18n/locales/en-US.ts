@@ -9,7 +9,7 @@ export const enUS = {
     password: "Password",
     emailPlaceholder: "your@email.com",
     passwordPlaceholder: "••••••••",
-    rememberMe: "Keep me signed in for 30 days",
+    rememberMe: "Keep me signed in for 30 days, I'm on a secure device",
     loginError: "Login error. Please check your credentials.",
     loadingApp: "Loading application...",
     loadingUserData: "Loading user data...",

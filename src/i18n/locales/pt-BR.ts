@@ -9,7 +9,7 @@ export const ptBR = {
     password: "Senha",
     emailPlaceholder: "seu@email.com",
     passwordPlaceholder: "••••••••",
-    rememberMe: "Mantenha-me conectado por 30 dias",
+    rememberMe: "Mantenha-me conectado por 30 dias, estou em dispositivo seguro",
     loginError: "Erro ao fazer login. Verifique suas credenciais.",
     loadingApp: "Carregando aplicação...",
     loadingUserData: "Carregando dados do usuário...",
