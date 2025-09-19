@@ -10,6 +10,12 @@ export interface DashboardStats {
   overdueTasks: number;
   totalUsers: number;
   activeUsers: number;
+  totalTenants: number;
+  activeTenants: number;
+  monthlyRevenue: number;
+  revenueGrowth: number;
+  userGrowth: number;
+  tenantGrowth: number;
 }
 
 export interface Activity {

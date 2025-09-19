@@ -8,6 +8,10 @@ import type {
   ApiResponse,
 } from "@/types";
 import { useTenantStore } from "@/store/tenantStore";
+import type {
+  SuperAdminActivity,
+  SuperAdminDashboardStats,
+} from "@/types/SuperAdmin";
 
 // Hook to get dashboard statistics
 export const useDashboardStats = () => {
@@ -84,5 +88,39 @@ export const useDashboardTimeline = () => {
     staleTime: 2 * 60 * 1000, // 2 minutes
     refetchOnWindowFocus: false,
     enabled: !isSuperAdmin,
+  });
+};
+
+export const useSuperAdminStats = () => {
+  const { isSuperAdmin } = useTenantStore();
+
+  return useQuery({
+    queryKey: ["super-admin-stats"],
+    queryFn: async () => {
+      const response = await apiClient.get<
+        ApiResponse<SuperAdminDashboardStats>
+      >("/dashboard/stats");
+      return response.data;
+    },
+    enabled: isSuperAdmin,
+    staleTime: 5 * 60 * 1000,
+    retry: 2,
+  });
+};
+
+export const useSuperAdminTimeline = () => {
+  const { isSuperAdmin } = useTenantStore();
+
+  return useQuery({
+    queryKey: ["super-admin-timeline"],
+    queryFn: async () => {
+      const response = await apiClient.get<ApiResponse<SuperAdminActivity[]>>(
+        "/dashboard/timeline"
+      );
+      return response.data;
+    },
+    enabled: isSuperAdmin,
+    staleTime: 2 * 60 * 1000,
+    retry: 2,
   });
 };

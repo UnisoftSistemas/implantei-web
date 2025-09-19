@@ -11,118 +11,125 @@ import {
   Skeleton,
 } from "@chakra-ui/react";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "@tanstack/react-query";
-import { Building2, Users, Activity, TrendingUp } from "lucide-react";
-import { apiClient } from "@/services/api";
-import type { ApiResponse } from "@/types";
-
-interface SuperAdminStats {
-  totalTenants: number;
-  activeTenants: number;
-  totalUsers: number;
-  totalProjects: number;
-  activeProjects: number;
-  monthlyRevenue: number;
-  growth: {
-    tenants: number;
-    users: number;
-    projects: number;
-    revenue: number;
-  };
-}
-
-interface RecentActivity {
-  id: string;
-  type: "tenant_created" | "user_registered" | "project_started";
-  description: string;
-  timestamp: string;
-  tenantName?: string;
-}
+import {
+  Building2,
+  Users,
+  Activity,
+  TrendingUp,
+  DollarSign,
+  AlertCircle,
+} from "lucide-react";
+// Import custom super admin hooks
+import {
+  useSuperAdminStats,
+  useSuperAdminTimeline,
+} from "@/hooks/useSuperAdminDashboard";
 
 export const SuperAdminDashboard = () => {
   const { t } = useTranslation();
 
-  // Fetch super admin stats
-  const { data: stats, isLoading: statsLoading } = useQuery({
-    queryKey: ["super-admin-stats"],
-    queryFn: async () => {
-      const response = await apiClient.get<ApiResponse<SuperAdminStats>>(
-        "/admin/stats"
-      );
-      return response.data;
-    },
-  });
+  // Mock navigation function for artifact demo
+  const handleNavigation = (path: string) => {
+    console.log(`Navigate to: ${path}`);
+  };
 
-  // Fetch recent activity
-  const { data: activities, isLoading: activitiesLoading } = useQuery({
-    queryKey: ["super-admin-activities"],
-    queryFn: async () => {
-      const response = await apiClient.get<ApiResponse<RecentActivity[]>>(
-        "/admin/activities"
-      );
-      return response.data;
-    },
-  });
+  // Use super admin specific hooks
+  const {
+    data: stats,
+    isLoading: statsLoading,
+    error: statsError,
+  } = useSuperAdminStats();
+
+  const { data: activities, isLoading: activitiesLoading } =
+    useSuperAdminTimeline();
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
     }).format(value);
   };
 
-  const formatPercentage = (value: number) => {
+  const formatPercentage = (value: number, showSign = true) => {
     const isPositive = value > 0;
+    const prefix = showSign && isPositive ? "+" : "";
     return (
       <Text
         fontSize="sm"
-        color={isPositive ? "green.600" : "red.600"}
+        color={isPositive ? "green.600" : value < 0 ? "red.600" : "gray.600"}
         fontWeight="medium"
+        display="inline"
       >
-        {isPositive ? "↗" : "↘"} {Math.abs(value)}%
+        {prefix}
+        {value.toFixed(1)}%
       </Text>
     );
   };
 
+  const getActivityIcon = (type: string) => {
+    switch (type) {
+      case "tenant_created":
+        return <Building2 size={16} />;
+      case "user_registered":
+        return <Users size={16} />;
+      case "project_started":
+      case "project_completed":
+        return <Activity size={16} />;
+      default:
+        return <AlertCircle size={16} />;
+    }
+  };
+
   return (
-    <VStack gap={8} align="stretch">
+    <VStack gap={8} align="stretch" w="full">
       {/* Header */}
       <Box>
         <Text fontSize="3xl" fontWeight="bold" color="gray.800" mb={2}>
           {t("superAdmin.dashboard.title")}
         </Text>
-        <Text color="gray.600" fontSize="lg">
+        <Text fontSize="lg" color="gray.600">
           {t("superAdmin.dashboard.subtitle")}
         </Text>
       </Box>
 
-      {/* Stats Grid */}
-      <Grid templateColumns="repeat(auto-fit, minmax(300px, 1fr))" gap={6}>
-        {/* Total Tenants */}
+      {/* Stats Cards Grid */}
+      <Grid templateColumns="repeat(auto-fit, minmax(280px, 1fr))" gap={6}>
+        {/* Total Companies */}
         <GridItem>
-          <Card.Root p={6} bg="white" borderRadius="xl" boxShadow="sm">
+          <Card.Root bg="white" borderRadius="xl" boxShadow="sm" p={6}>
             <Card.Body>
               <HStack justify="space-between" align="start">
-                <VStack align="start" gap={2}>
+                <VStack align="start" gap={3}>
                   <HStack gap={2}>
-                    <Building2 size={20} color="blue.500" />
+                    <Building2 size={20} color="#3182ce" />
                     <Text fontSize="sm" color="gray.600" fontWeight="medium">
                       {t("superAdmin.stats.totalTenants")}
                     </Text>
                   </HStack>
 
-                  <VStack align="start" gap={0}>
-                    <Skeleton loading={statsLoading} height="32px">
-                      <Text fontSize="2xl" fontWeight="bold" color="gray.800">
+                  <VStack align="start" gap={1}>
+                    <Skeleton
+                      loading={statsLoading}
+                      height="36px"
+                      width="100px"
+                    >
+                      <Text fontSize="3xl" fontWeight="bold" color="gray.800">
                         {stats?.totalTenants || 0}
                       </Text>
                     </Skeleton>
 
-                    <HStack gap={2}>
-                      <Badge colorScheme="green" size="sm">
+                    <HStack gap={2} align="center">
+                      <Badge size="sm" colorScheme="green" variant="subtle">
                         {stats?.activeTenants || 0} {t("common.active")}
                       </Badge>
-                      {stats?.growth && formatPercentage(stats.growth.tenants)}
+                      {stats?.tenantGrowth !== undefined && (
+                        <HStack gap={1}>
+                          <TrendingUp size={12} color="#38a169" />
+                          {formatPercentage(stats.tenantGrowth)}
+                        </HStack>
+                      )}
                     </HStack>
                   </VStack>
                 </VStack>
@@ -133,29 +140,38 @@ export const SuperAdminDashboard = () => {
 
         {/* Total Users */}
         <GridItem>
-          <Card.Root p={6} bg="white" borderRadius="xl" boxShadow="sm">
+          <Card.Root bg="white" borderRadius="xl" boxShadow="sm" p={6}>
             <Card.Body>
               <HStack justify="space-between" align="start">
-                <VStack align="start" gap={2}>
+                <VStack align="start" gap={3}>
                   <HStack gap={2}>
-                    <Users size={20} color="green.500" />
+                    <Users size={20} color="#38a169" />
                     <Text fontSize="sm" color="gray.600" fontWeight="medium">
                       {t("superAdmin.stats.totalUsers")}
                     </Text>
                   </HStack>
 
-                  <VStack align="start" gap={0}>
-                    <Skeleton loading={statsLoading} height="32px">
-                      <Text fontSize="2xl" fontWeight="bold" color="gray.800">
+                  <VStack align="start" gap={1}>
+                    <Skeleton
+                      loading={statsLoading}
+                      height="36px"
+                      width="100px"
+                    >
+                      <Text fontSize="3xl" fontWeight="bold" color="gray.800">
                         {stats?.totalUsers || 0}
                       </Text>
                     </Skeleton>
 
-                    <HStack gap={2}>
+                    <HStack gap={2} align="center">
                       <Text fontSize="sm" color="gray.500">
                         {t("superAdmin.stats.crossAllTenants")}
                       </Text>
-                      {stats?.growth && formatPercentage(stats.growth.users)}
+                      {stats?.userGrowth !== undefined && (
+                        <HStack gap={1}>
+                          <TrendingUp size={12} color="#38a169" />
+                          {formatPercentage(stats.userGrowth)}
+                        </HStack>
+                      )}
                     </HStack>
                   </VStack>
                 </VStack>
@@ -166,31 +182,32 @@ export const SuperAdminDashboard = () => {
 
         {/* Active Projects */}
         <GridItem>
-          <Card.Root p={6} bg="white" borderRadius="xl" boxShadow="sm">
+          <Card.Root bg="white" borderRadius="xl" boxShadow="sm" p={6}>
             <Card.Body>
               <HStack justify="space-between" align="start">
-                <VStack align="start" gap={2}>
+                <VStack align="start" gap={3}>
                   <HStack gap={2}>
-                    <Activity size={20} color="purple.500" />
+                    <Activity size={20} color="#805ad5" />
                     <Text fontSize="sm" color="gray.600" fontWeight="medium">
                       {t("superAdmin.stats.activeProjects")}
                     </Text>
                   </HStack>
 
-                  <VStack align="start" gap={0}>
-                    <Skeleton loading={statsLoading} height="32px">
-                      <Text fontSize="2xl" fontWeight="bold" color="gray.800">
+                  <VStack align="start" gap={1}>
+                    <Skeleton
+                      loading={statsLoading}
+                      height="36px"
+                      width="100px"
+                    >
+                      <Text fontSize="3xl" fontWeight="bold" color="gray.800">
                         {stats?.activeProjects || 0}
                       </Text>
                     </Skeleton>
 
-                    <HStack gap={2}>
-                      <Text fontSize="sm" color="gray.500">
-                        {t("superAdmin.stats.of")} {stats?.totalProjects || 0}{" "}
-                        {t("common.total")}
-                      </Text>
-                      {stats?.growth && formatPercentage(stats.growth.projects)}
-                    </HStack>
+                    <Text fontSize="sm" color="gray.500">
+                      {t("superAdmin.stats.of")} {stats?.totalProjects || 0}{" "}
+                      {t("common.total")}
+                    </Text>
                   </VStack>
                 </VStack>
               </HStack>
@@ -200,29 +217,38 @@ export const SuperAdminDashboard = () => {
 
         {/* Monthly Revenue */}
         <GridItem>
-          <Card.Root p={6} bg="white" borderRadius="xl" boxShadow="sm">
+          <Card.Root bg="white" borderRadius="xl" boxShadow="sm" p={6}>
             <Card.Body>
               <HStack justify="space-between" align="start">
-                <VStack align="start" gap={2}>
+                <VStack align="start" gap={3}>
                   <HStack gap={2}>
-                    <TrendingUp size={20} color="orange.500" />
+                    <DollarSign size={20} color="#d69e2e" />
                     <Text fontSize="sm" color="gray.600" fontWeight="medium">
                       {t("superAdmin.stats.monthlyRevenue")}
                     </Text>
                   </HStack>
 
-                  <VStack align="start" gap={0}>
-                    <Skeleton loading={statsLoading} height="32px">
-                      <Text fontSize="2xl" fontWeight="bold" color="gray.800">
+                  <VStack align="start" gap={1}>
+                    <Skeleton
+                      loading={statsLoading}
+                      height="36px"
+                      width="120px"
+                    >
+                      <Text fontSize="3xl" fontWeight="bold" color="gray.800">
                         {formatCurrency(stats?.monthlyRevenue || 0)}
                       </Text>
                     </Skeleton>
 
-                    <HStack gap={2}>
+                    <HStack gap={2} align="center">
                       <Text fontSize="sm" color="gray.500">
                         {t("superAdmin.stats.thisMonth")}
                       </Text>
-                      {stats?.growth && formatPercentage(stats.growth.revenue)}
+                      {stats?.revenueGrowth !== undefined && (
+                        <HStack gap={1}>
+                          <TrendingUp size={12} color="#38a169" />
+                          {formatPercentage(stats.revenueGrowth)}
+                        </HStack>
+                      )}
                     </HStack>
                   </VStack>
                 </VStack>
@@ -232,82 +258,160 @@ export const SuperAdminDashboard = () => {
         </GridItem>
       </Grid>
 
-      {/* Recent Activity */}
-      <Card.Root bg="white" borderRadius="xl" boxShadow="sm">
-        <Card.Header pb={4}>
-          <Text fontSize="xl" fontWeight="bold" color="gray.800">
-            {t("superAdmin.activity.title")}
-          </Text>
-          <Text fontSize="sm" color="gray.500">
-            {t("superAdmin.activity.subtitle")}
-          </Text>
-        </Card.Header>
+      {/* Bottom Section - Recent Activity & Quick Actions */}
+      <Grid templateColumns="2fr 1fr" gap={6}>
+        {/* Recent Activity */}
+        <GridItem>
+          <Card.Root bg="white" borderRadius="xl" boxShadow="sm">
+            <Card.Header>
+              <VStack align="start" gap={1}>
+                <Text fontSize="xl" fontWeight="bold" color="gray.800">
+                  {t("superAdmin.activity.title")}
+                </Text>
+                <Text fontSize="sm" color="gray.600">
+                  {t("superAdmin.activity.subtitle")}
+                </Text>
+              </VStack>
+            </Card.Header>
 
-        <Card.Body>
-          <VStack gap={4} align="stretch">
-            {activitiesLoading ? (
-              // Loading skeletons
-              Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} height="60px" borderRadius="md" />
-              ))
-            ) : activities && activities.length > 0 ? (
-              activities.map((activity) => (
-                <HStack
-                  key={activity.id}
-                  p={4}
-                  bg="gray.50"
-                  borderRadius="md"
-                  justify="space-between"
-                >
-                  <VStack align="start" gap={1}>
-                    <Text fontSize="sm" fontWeight="medium" color="gray.800">
-                      {activity.description}
+            <Card.Body>
+              <VStack gap={3} align="stretch">
+                {activitiesLoading ? (
+                  // Loading skeletons
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <Skeleton key={i} height="60px" borderRadius="md" />
+                  ))
+                ) : activities && activities.length > 0 ? (
+                  activities.slice(0, 8).map((activity) => (
+                    <HStack
+                      key={activity.id}
+                      p={4}
+                      bg="gray.50"
+                      borderRadius="md"
+                      justify="space-between"
+                    >
+                      <HStack gap={3}>
+                        <Box color="gray.600">
+                          {getActivityIcon(activity.type)}
+                        </Box>
+
+                        <VStack align="start" gap={0.5}>
+                          <Text
+                            fontSize="sm"
+                            fontWeight="medium"
+                            color="gray.800"
+                          >
+                            {activity.description}
+                          </Text>
+
+                          <HStack gap={2}>
+                            {activity.tenantName && (
+                              <Badge
+                                size="sm"
+                                colorScheme="blue"
+                                variant="subtle"
+                              >
+                                {activity.tenantName}
+                              </Badge>
+                            )}
+                            {activity.userName && (
+                              <Text fontSize="xs" color="gray.500">
+                                por {activity.userName}
+                              </Text>
+                            )}
+                          </HStack>
+                        </VStack>
+                      </HStack>
+
+                      <Text fontSize="xs" color="gray.500" whiteSpace="nowrap">
+                        {new Date(activity.timestamp).toLocaleString("pt-BR", {
+                          day: "2-digit",
+                          month: "short",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </Text>
+                    </HStack>
+                  ))
+                ) : (
+                  <Box textAlign="center" py={12}>
+                    <Text color="gray.500" fontSize="sm">
+                      {t("superAdmin.activity.noActivity")}
                     </Text>
-                    {activity.tenantName && (
-                      <Badge size="sm" colorScheme="blue" variant="subtle">
-                        {activity.tenantName}
-                      </Badge>
-                    )}
-                  </VStack>
+                  </Box>
+                )}
+              </VStack>
+            </Card.Body>
+          </Card.Root>
+        </GridItem>
 
-                  <Text fontSize="xs" color="gray.500">
-                    {new Date(activity.timestamp).toLocaleDateString("pt-BR")}
-                  </Text>
-                </HStack>
-              ))
-            ) : (
-              <Text color="gray.500" textAlign="center" py={8}>
-                {t("superAdmin.activity.noActivity")}
+        {/* Quick Actions */}
+        <GridItem>
+          <Card.Root bg="white" borderRadius="xl" boxShadow="sm">
+            <Card.Header>
+              <Text fontSize="xl" fontWeight="bold" color="gray.800">
+                {t("superAdmin.quickActions.title")}
               </Text>
-            )}
-          </VStack>
-        </Card.Body>
-      </Card.Root>
+            </Card.Header>
 
-      {/* Quick Actions */}
-      <Card.Root bg="white" borderRadius="xl" boxShadow="sm">
-        <Card.Header pb={4}>
-          <Text fontSize="xl" fontWeight="bold" color="gray.800">
-            {t("superAdmin.quickActions.title")}
-          </Text>
-        </Card.Header>
+            <Card.Body>
+              <VStack gap={4} align="stretch">
+                <Button
+                  size="lg"
+                  colorScheme="blue"
+                  variant="solid"
+                  onClick={() => handleNavigation("/super-admin/tenants")}
+                  w="full"
+                  justifyContent="flex-start"
+                >
+                  <Building2 size={18} />{" "}
+                  {t("superAdmin.actions.manageTenants")}
+                </Button>
 
-        <Card.Body>
-          <Grid templateColumns="repeat(auto-fit, minmax(200px, 1fr))" gap={4}>
-            <Button size="lg" colorScheme="blue" variant="outline">
-              <Building2 size={20} /> {t("superAdmin.actions.manageTenants")}
-            </Button>
+                <Button
+                  size="lg"
+                  colorScheme="green"
+                  variant="solid"
+                  onClick={() => handleNavigation("/super-admin/users")}
+                  w="full"
+                  justifyContent="flex-start"
+                >
+                  <Users size={18} /> {t("superAdmin.actions.manageUsers")}
+                </Button>
 
-            <Button size="lg" colorScheme="green" variant="outline">
-              <Users size={20} /> {t("superAdmin.actions.manageUsers")}
-            </Button>
+                <Button
+                  size="lg"
+                  colorScheme="purple"
+                  variant="outline"
+                  onClick={() => handleNavigation("/super-admin/reports")}
+                  w="full"
+                  justifyContent="flex-start"
+                >
+                  <TrendingUp size={18} /> {t("superAdmin.actions.viewReports")}
+                </Button>
 
-            <Button size="lg" colorScheme="purple" variant="outline">
-              <Activity size={20} /> {t("superAdmin.actions.viewReports")}
-            </Button>
-          </Grid>
-        </Card.Body>
-      </Card.Root>
+                {/* Error state for stats loading */}
+                {statsError && (
+                  <Box
+                    p={4}
+                    bg="red.50"
+                    borderRadius="md"
+                    border="1px solid"
+                    borderColor="red.200"
+                  >
+                    <HStack gap={2}>
+                      <AlertCircle size={16} color="#e53e3e" />
+                      <Text fontSize="sm" color="red.700">
+                        Erro ao carregar estatísticas
+                      </Text>
+                    </HStack>
+                  </Box>
+                )}
+              </VStack>
+            </Card.Body>
+          </Card.Root>
+        </GridItem>
+      </Grid>
     </VStack>
   );
 };

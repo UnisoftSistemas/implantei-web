@@ -11,8 +11,8 @@ export interface User {
   profileImageUrl?: string;
   active: boolean;
   tenantCompanyId?: string | null; // Multi-tenant support
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // MULTI-TENANT: Updated UserProfile with tenant info
